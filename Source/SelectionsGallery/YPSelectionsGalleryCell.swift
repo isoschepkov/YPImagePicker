@@ -7,29 +7,27 @@
 //
 
 import UIKit
-import Stevia
 
 public class YPSelectionsGalleryCell: UICollectionViewCell {
-    
     let imageView = UIImageView()
     let editIcon = UIView()
     let editSquare = UIView()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-    
+
         sv(
             imageView,
             editIcon,
             editSquare
         )
-        
+
         imageView.fillContainer()
-        editIcon.size(32).left(12).bottom(12)
+        editIcon.size(32).steviaLeft(12).steviaBottom(12)
         editSquare.size(16)
         editSquare.CenterY == editIcon.CenterY
         editSquare.CenterX == editIcon.CenterX
-        
+
         layer.shadowColor = UIColor(r: 46, g: 43, b: 37).cgColor
         layer.shadowOpacity = 0.2
         layer.shadowOffset = CGSize(width: 4, height: 7)
@@ -48,17 +46,16 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
             v.layer.borderColor = UIColor.black.cgColor
         }
     }
-    
+
     func setEditable(_ editable: Bool) {
-        self.editIcon.isHidden = !editable
-        self.editSquare.isHidden = !editable
+        editIcon.isHidden = !editable
+        editSquare.isHidden = !editable
     }
-    
-    required public init?(coder aDecoder: NSCoder) {
+
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
+
     public override var isHighlighted: Bool {
         didSet {
             UIView.animate(withDuration: 0.5,
@@ -67,13 +64,13 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
                            initialSpringVelocity: 0,
                            options: .curveEaseInOut,
                            animations: {
-                            if self.isHighlighted {
-                                self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                                self.alpha = 0.8
-                            } else {
-                                self.transform = .identity
-                                self.alpha = 1
-                            }
+                               if self.isHighlighted {
+                                   self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                                   self.alpha = 0.8
+                               } else {
+                                   self.transform = .identity
+                                   self.alpha = 1
+                               }
             }, completion: nil)
         }
     }

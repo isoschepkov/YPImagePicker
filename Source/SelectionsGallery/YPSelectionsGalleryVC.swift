@@ -9,41 +9,40 @@
 import UIKit
 
 public class YPSelectionsGalleryVC: UIViewController {
-    
     public var items: [YPMediaItem] = []
     public var didFinishHandler: ((_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)?
     private var lastContentOffsetX: CGFloat = 0
-    
+
     var v = YPSelectionsGalleryView()
     public override func loadView() { view = v }
 
     public required init(items: [YPMediaItem],
                          didFinishHandler:
-        @escaping ((_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)) {
+                         @escaping ((_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)) {
         super.init(nibName: nil, bundle: nil)
         self.items = items
         self.didFinishHandler = didFinishHandler
     }
-    
-    public required init?(coder aDecoder: NSCoder) {
+
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override public func viewDidLoad() {
+
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         // Register collection view cell
         v.collectionView.register(YPSelectionsGalleryCell.self, forCellWithReuseIdentifier: "item")
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
-        
+
         // Setup navigation bar
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
                                                             style: .done,
                                                             target: self,
                                                             action: #selector(done))
         navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
-        
+
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
     }
@@ -63,11 +62,12 @@ public class YPSelectionsGalleryVC: UIViewController {
 }
 
 // MARK: - Collection View
+
 extension YPSelectionsGalleryVC: UICollectionViewDataSource {
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return items.count
     }
-    
+
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "item",
@@ -76,10 +76,10 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource {
         }
         let item = items[indexPath.row]
         switch item {
-        case .photo(let photo):
+        case let .photo(photo):
             cell.imageView.image = photo.image
             cell.setEditable(YPConfig.showsPhotoFilters)
-        case .video(let video):
+        case let .video(video):
             cell.imageView.image = video.thumbnail
             cell.setEditable(YPConfig.showsVideoTrimmer)
         }
@@ -88,21 +88,20 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource {
 }
 
 extension YPSelectionsGalleryVC: UICollectionViewDelegate {
-    
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = items[indexPath.row]
         var mediaFilterVC: IsMediaFilterVC?
         switch item {
-        case .photo(let photo):
+        case let .photo(photo):
             if !YPConfig.filters.isEmpty, YPConfig.showsPhotoFilters {
                 mediaFilterVC = YPPhotoFiltersVC(inputPhoto: photo, isFromSelectionVC: true)
             }
-        case .video(let video):
+        case let .video(video):
             if YPConfig.showsVideoTrimmer {
                 mediaFilterVC = YPVideoFiltersVC.initWith(video: video, isFromSelectionVC: true)
             }
         }
-        
+
         mediaFilterVC?.didSave = { outputMedia in
             self.items[indexPath.row] = outputMedia
             collectionView.reloadData()
@@ -117,7 +116,7 @@ extension YPSelectionsGalleryVC: UICollectionViewDelegate {
             present(navVC, animated: true, completion: nil)
         }
     }
-    
+
     // Set "paging" behaviour when scrolling backwards.
     // This works by having `targetContentOffset(forProposedContentOffset: withScrollingVelocity` overriden
     // in the collection view Flow subclass & using UIScrollViewDecelerationRateFast

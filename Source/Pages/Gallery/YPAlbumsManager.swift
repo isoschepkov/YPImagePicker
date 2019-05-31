@@ -10,17 +10,16 @@ import Foundation
 import Photos
 
 class YPAlbumsManager {
-    
     private var cachedAlbums: [YPAlbum]?
-    
+
     func fetchAlbums() -> [YPAlbum] {
         if let cachedAlbums = cachedAlbums {
             return cachedAlbums
         }
-        
+
         var albums = [YPAlbum]()
         let options = PHFetchOptions()
-        
+
         let smartAlbumsResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum,
                                                                         subtype: .any,
                                                                         options: options)
@@ -35,7 +34,7 @@ class YPAlbumsManager {
                 if album.numberOfItems > 0 {
                     let r = PHAsset.fetchKeyAssets(in: assetCollection, options: nil)
                     if let first = r?.firstObject {
-                        let targetSize = CGSize(width: 78*2, height: 78*2)
+                        let targetSize = CGSize(width: 78 * 2, height: 78 * 2)
                         let options = PHImageRequestOptions()
                         options.isSynchronous = true
                         options.deliveryMode = .fastFormat
@@ -44,11 +43,11 @@ class YPAlbumsManager {
                                                               contentMode: .aspectFit,
                                                               options: options,
                                                               resultHandler: { image, _ in
-                                                                album.thumbnail = image
+                                                                  album.thumbnail = image
                         })
                     }
                     album.collection = assetCollection
-                    
+
                     if YPConfig.library.mediaType == .photo {
                         if !(assetCollection.assetCollectionSubtype == .smartAlbumSlomoVideos
                             || assetCollection.assetCollectionSubtype == .smartAlbumVideos) {
@@ -63,14 +62,13 @@ class YPAlbumsManager {
         cachedAlbums = albums
         return albums
     }
-    
+
     func mediaCountFor(collection: PHAssetCollection) -> Int {
         let options = PHFetchOptions()
         options.predicate = YPConfig.library.mediaType.predicate()
         let result = PHAsset.fetchAssets(in: collection, options: options)
         return result.count
     }
-    
 }
 
 extension YPlibraryMediaType {

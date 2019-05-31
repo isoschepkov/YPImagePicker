@@ -9,36 +9,35 @@
 import Foundation
 
 public struct YPWordings {
-    
     public var permissionPopup = PermissionPopup()
     public var videoDurationPopup = VideoDurationPopup()
 
     public struct PermissionPopup {
-        public var title = ypLocalized("YPImagePickerPermissionDeniedPopupTitle")
-        public var message = ypLocalized("YPImagePickerPermissionDeniedPopupMessage")
-        public var cancel = ypLocalized("YPImagePickerPermissionDeniedPopupCancel")
-        public var grantPermission = ypLocalized("YPImagePickerPermissionDeniedPopupGrantPermission")
+        public var title = "Permission denied" // YPImagePickerPermissionDeniedPopupTitle
+        public var message = "Please allow access" // YPImagePickerPermissionDeniedPopupMessage
+        public var cancel = "Cancel" // YPImagePickerPermissionDeniedPopupCancel
+        public var grantPermission = "Grant Permission" // YPImagePickerPermissionDeniedPopupGrantPermission
     }
-    
+
     public struct VideoDurationPopup {
-        public var title = ypLocalized("YPImagePickerVideoDurationTitle")
-        public var tooShortMessage = ypLocalized("YPImagePickerVideoTooShort")
-        public var tooLongMessage = ypLocalized("YPImagePickerVideoTooLong")
+        public var title = "Video duration" // YPImagePickerVideoDurationTitle
+        public var tooShortMessage = "The video must be at least %@ seconds" // YPImagePickerVideoTooShort
+        public var tooLongMessage = "Pick a video less than %@ seconds long" // YPImagePickerVideoTooLong
     }
-    
-    public var ok = ypLocalized("YPImagePickerOk")
-    public var done = ypLocalized("YPImagePickerDone")
-    public var cancel = ypLocalized("YPImagePickerCancel")
-    public var save = ypLocalized("YPImagePickerSave")
-    public var processing = ypLocalized("YPImagePickerProcessing")
-    public var trim = ypLocalized("YPImagePickerTrim")
-    public var cover = ypLocalized("YPImagePickerCover")
-    public var albumsTitle = ypLocalized("YPImagePickerAlbums")
-    public var libraryTitle = ypLocalized("YPImagePickerLibrary")
-    public var cameraTitle = ypLocalized("YPImagePickerPhoto")
-    public var videoTitle = ypLocalized("YPImagePickerVideo")
-    public var next = ypLocalized("YPImagePickerNext")
-    public var filter = ypLocalized("YPImagePickerFilter")
-    public var crop = ypLocalized("YPImagePickerCrop")
-    public var warningMaxItemsLimit = ypLocalized("YPImagePickerWarningItemsLimit")
+
+    public var ok = "Ok" // YPImagePickerOk
+    public var done = "Done" // YPImagePickerDone
+    public var cancel = "Cancel" // YPImagePickerCancel
+    public var save = "Save" // YPImagePickerSave
+    public var processing = "Processing.." // YPImagePickerProcessing
+    public var trim = "Trim" // YPImagePickerTrim
+    public var cover = "Cover" // YPImagePickerCover
+    public var albumsTitle = "Albums" // YPImagePickerAlbums
+    public var libraryTitle = "Library" // YPImagePickerLibrary
+    public var cameraTitle = "Photo" // YPImagePickerPhoto
+    public var videoTitle = "Video" // YPImagePickerVideo
+    public var next = "Next" // YPImagePickerNext
+    public var filter = "Filter" // YPImagePickerFilter
+    public var crop = "Crop" // YPImagePickerCrop
+    public var warningMaxItemsLimit = "The limit is %d photos or videos" // YPImagePickerWarningItemsLimit
 }

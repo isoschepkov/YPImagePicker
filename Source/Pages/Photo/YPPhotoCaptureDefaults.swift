@@ -6,13 +6,12 @@
 //  Copyright © 2018 Yummypets. All rights reserved.
 //
 
-import UIKit
 import AVFoundation
+import UIKit
 
 extension YPPhotoCapture {
-    
     // MARK: - Setup
-    
+
     private func setupCaptureSession() {
         session.beginConfiguration()
         session.sessionPreset = .photo
@@ -33,9 +32,9 @@ extension YPPhotoCapture {
         session.commitConfiguration()
         isCaptureSessionSetup = true
     }
-    
+
     // MARK: - Start/Stop Camera
-    
+
     func start(with previewView: UIView, completion: @escaping () -> Void) {
         self.previewView = previewView
         sessionQueue.async { [weak self] in
@@ -50,7 +49,7 @@ extension YPPhotoCapture {
             })
         }
     }
-    
+
     func startCamera(completion: @escaping (() -> Void)) {
         if !session.isRunning {
             sessionQueue.async { [weak self] in
@@ -68,7 +67,7 @@ extension YPPhotoCapture {
             }
         }
     }
-    
+
     func stopCamera() {
         if session.isRunning {
             sessionQueue.async { [weak self] in
@@ -76,16 +75,16 @@ extension YPPhotoCapture {
             }
         }
     }
-    
+
     // MARK: - Preview
-    
+
     func tryToSetupPreview() {
         if !isPreviewSetup {
             setupPreview()
             isPreviewSetup = true
         }
     }
-    
+
     func setupPreview() {
         videoLayer = AVCaptureVideoPreviewLayer(session: session)
         DispatchQueue.main.async {
@@ -94,15 +93,15 @@ extension YPPhotoCapture {
             self.previewView.layer.addSublayer(self.videoLayer)
         }
     }
-    
+
     // MARK: - Focus
-    
+
     func focus(on point: CGPoint) {
         setFocusPointOnDevice(device: device!, point: point)
     }
-    
+
     // MARK: - Flip
-    
+
     func flipCamera(completion: @escaping () -> Void) {
         sessionQueue.async { [weak self] in
             self?.flip()
@@ -111,7 +110,7 @@ extension YPPhotoCapture {
             }
         }
     }
-    
+
     private func flip() {
         session.resetInputs()
         guard let di = deviceInput else { return }
@@ -121,9 +120,9 @@ extension YPPhotoCapture {
             session.addInput(deviceInput)
         }
     }
-    
+
     // MARK: - Orientation
-    
+
     func setCurrentOrienation() {
         let connection = output.connection(with: .video)
         let orientation = UIDevice.current.orientation

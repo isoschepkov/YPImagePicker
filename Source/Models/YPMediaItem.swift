@@ -6,24 +6,22 @@
 //  Copyright © 2018 Yummypets. All rights reserved.
 //
 
-import UIKit
-import Foundation
 import AVFoundation
+import Foundation
 import Photos
-
+import UIKit
 
 public class YPMediaPhoto {
-    
     public var image: UIImage { return modifiedImage ?? originalImage }
     public let originalImage: UIImage
     public var modifiedImage: UIImage?
     public let fromCamera: Bool
-    public let exifMeta : [String : Any]?
+    public let exifMeta: [String: Any]?
     public var asset: PHAsset?
-    
-    public init(image: UIImage, exifMeta : [String : Any]? = nil, fromCamera: Bool = false, asset: PHAsset? = nil) {
-        self.originalImage = image
-        self.modifiedImage = nil
+
+    public init(image: UIImage, exifMeta: [String: Any]? = nil, fromCamera: Bool = false, asset: PHAsset? = nil) {
+        originalImage = image
+        modifiedImage = nil
         self.fromCamera = fromCamera
         self.exifMeta = exifMeta
         self.asset = asset
@@ -31,7 +29,6 @@ public class YPMediaPhoto {
 }
 
 public class YPMediaVideo {
-    
     public var thumbnail: UIImage
     public var url: URL
     public let fromCamera: Bool
@@ -39,7 +36,7 @@ public class YPMediaVideo {
 
     public init(thumbnail: UIImage, videoURL: URL, fromCamera: Bool = false, asset: PHAsset? = nil) {
         self.thumbnail = thumbnail
-        self.url = videoURL
+        url = videoURL
         self.fromCamera = fromCamera
         self.asset = asset
     }
@@ -70,7 +67,7 @@ public extension Array where Element == YPMediaItem {
         }
         return nil
     }
-    
+
     var singleVideo: YPMediaVideo? {
         if let f = first, case let .video(v) = f {
             return v

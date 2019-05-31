@@ -16,6 +16,6 @@ extension CGFloat {
         if rhs == 0 {
             return 0
         }
-        return lhs/rhs
+        return lhs / rhs
     }
 }

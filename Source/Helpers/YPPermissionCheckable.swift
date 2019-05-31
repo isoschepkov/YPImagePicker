@@ -6,27 +6,26 @@
 //  Copyright © 2016 Yummypets. All rights reserved.
 //
 
-import UIKit
 import AVFoundation
+import UIKit
 
 protocol YPPermissionCheckable {
     func checkPermission()
 }
 
 extension YPPermissionCheckable where Self: UIViewController {
-    
     func checkPermission() {
         checkPermissionToAccessVideo { _ in }
     }
-    
-    func doAfterPermissionCheck(block:@escaping () -> Void) {
+
+    func doAfterPermissionCheck(block: @escaping () -> Void) {
         checkPermissionToAccessVideo { hasPermission in
             if hasPermission {
                 block()
             }
         }
     }
-    
+
     // Async beacause will prompt permission if .notDetermined
     // and ask custom popup if denied.
     func checkPermissionToAccessVideo(block: @escaping (Bool) -> Void) {

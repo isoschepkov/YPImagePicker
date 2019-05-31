@@ -14,40 +14,38 @@ protocol IsMediaFilterVC: class {
 }
 
 open class YPPhotoFiltersVC: UIViewController, IsMediaFilterVC, UIGestureRecognizerDelegate {
-    
-    required public init(inputPhoto: YPMediaPhoto, isFromSelectionVC: Bool) {
+    public required init(inputPhoto: YPMediaPhoto, isFromSelectionVC: Bool) {
         super.init(nibName: nil, bundle: nil)
-        
+
         self.inputPhoto = inputPhoto
         self.isFromSelectionVC = isFromSelectionVC
     }
-    
+
     public var inputPhoto: YPMediaPhoto!
     public var isFromSelectionVC = false
 
     public var didSave: ((YPMediaItem) -> Void)?
     public var didCancel: (() -> Void)?
 
-
     fileprivate let filters: [YPFilter] = YPConfig.filters
 
     fileprivate var selectedFilter: YPFilter?
-    
+
     fileprivate var filteredThumbnailImagesArray: [UIImage] = []
     fileprivate var thumbnailImageForFiltering: CIImage? // Small image for creating filters thumbnails
     fileprivate var currentlySelectedImageThumbnail: UIImage? // Used for comparing with original image when tapped
 
     fileprivate var v = YPFiltersView()
 
-    override open var prefersStatusBarHidden: Bool { return YPConfig.hidesStatusBar }
-    override open func loadView() { view = v }
-    required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
+    open override var prefersStatusBarHidden: Bool { return YPConfig.hidesStatusBar }
+    open override func loadView() { view = v }
+    public required init?(coder _: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
     // MARK: - Life Cycle ♻️
 
-    override open func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // Setup of main image an thumbnail images
         v.imageView.image = inputPhoto.image
         thumbnailImageForFiltering = thumbFromImage(inputPhoto.image)
@@ -64,30 +62,31 @@ open class YPPhotoFiltersVC: UIViewController, IsMediaFilterVC, UIGestureRecogni
             DispatchQueue.main.async {
                 self.v.collectionView.reloadData()
                 self.v.collectionView.selectItem(at: IndexPath(row: 0, section: 0),
-                                            animated: false,
-                                            scrollPosition: UICollectionView.ScrollPosition.bottom)
+                                                 animated: false,
+                                                 scrollPosition: UICollectionView.ScrollPosition.bottom)
                 self.v.filtersLoader.stopAnimating()
             }
         }
-        
+
         // Setup of Collection View
         v.collectionView.register(YPFilterCollectionViewCell.self, forCellWithReuseIdentifier: "FilterCell")
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
-        
+
         // Setup of Navigation Bar
         title = YPConfig.wordings.filter
         if isFromSelectionVC {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.cancel,
-                                                               style: .plain,
-                                                               target: self,
-                                                               action: #selector(cancel))
+            let backButton = YPBackButton(frame: CGRect(x: 0, y: 0, width: 24, height: navigationController?.navigationBar.frame.height ?? 0))
+            backButton.didTap = { [weak self] in
+                self?.cancel()
+            }
+            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         }
         setupRightBarButton()
-        
+
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
-        
+
         // Touch preview to see original image.
         let touchDownGR = UILongPressGestureRecognizer(target: self,
                                                        action: #selector(handleTouchDown))
@@ -96,9 +95,9 @@ open class YPPhotoFiltersVC: UIViewController, IsMediaFilterVC, UIGestureRecogni
         v.imageView.addGestureRecognizer(touchDownGR)
         v.imageView.isUserInteractionEnabled = true
     }
-    
+
     // MARK: Setup - ⚙️
-    
+
     fileprivate func setupRightBarButton() {
         let rightBarButtonTitle = isFromSelectionVC ? YPConfig.wordings.done : YPConfig.wordings.next
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: rightBarButtonTitle,
@@ -107,7 +106,7 @@ open class YPPhotoFiltersVC: UIViewController, IsMediaFilterVC, UIGestureRecogni
                                                             action: #selector(save))
         navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
     }
-    
+
     // MARK: - Methods 🏓
 
     @objc
@@ -120,7 +119,7 @@ open class YPPhotoFiltersVC: UIViewController, IsMediaFilterVC, UIGestureRecogni
         default: ()
         }
     }
-    
+
     fileprivate func thumbFromImage(_ img: UIImage) -> CIImage {
         let k = img.size.width / img.size.height
         let scale = UIScreen.main.scale
@@ -133,18 +132,18 @@ open class YPPhotoFiltersVC: UIViewController, IsMediaFilterVC, UIGestureRecogni
         UIGraphicsEndImageContext()
         return smallImage!.toCIImage()!
     }
-    
+
     // MARK: - Actions 🥂
 
     @objc
     func cancel() {
         didCancel?()
     }
-    
+
     @objc
     func save() {
         guard let didSave = didSave else { return print("Don't have saveCallback") }
-        self.navigationItem.rightBarButtonItem = YPLoaders.defaultLoader
+        navigationItem.rightBarButtonItem = YPLoaders.defaultLoader
 
         DispatchQueue.global().async {
             if let f = self.selectedFilter,
@@ -164,10 +163,10 @@ open class YPPhotoFiltersVC: UIViewController, IsMediaFilterVC, UIGestureRecogni
 }
 
 extension YPPhotoFiltersVC: UICollectionViewDataSource {
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return filteredThumbnailImagesArray.count
     }
-    
+
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let filter = filters[indexPath.row]
@@ -184,9 +183,9 @@ extension YPPhotoFiltersVC: UICollectionViewDataSource {
 }
 
 extension YPPhotoFiltersVC: UICollectionViewDelegate {
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedFilter = filters[indexPath.row]
         currentlySelectedImageThumbnail = filteredThumbnailImagesArray[indexPath.row]
-        self.v.imageView.image = currentlySelectedImageThumbnail
+        v.imageView.image = currentlySelectedImageThumbnail
     }
 }

@@ -6,12 +6,11 @@
 //  Copyright © 2018 Yummypets. All rights reserved.
 //
 
-import Foundation
 import AVFoundation
+import Foundation
 import UIKit
 
 protocol YPPhotoCapture: class {
-    
     // Public api
     func start(with previewView: UIView, completion: @escaping () -> Void)
     func stopCamera()
@@ -23,7 +22,7 @@ protocol YPPhotoCapture: class {
     func shoot(completion: @escaping (Data) -> Void)
     var videoLayer: AVCaptureVideoPreviewLayer! { get set }
     var device: AVCaptureDevice? { get }
-    
+
     // Used by Default extension
     var previewView: UIView! { get set }
     var isCaptureSessionSetup: Bool { get set }
@@ -36,17 +35,12 @@ protocol YPPhotoCapture: class {
 }
 
 func newPhotoCapture() -> YPPhotoCapture {
-    if #available(iOS 10.0, *) {
-        return PostiOS10PhotoCapture()
-    } else {
-        return PreiOS10PhotoCapture()
-    }
+    return PostiOS10PhotoCapture()
 }
 
 enum YPFlashMode {
     case off
     case on
-    case auto
 }
 
 extension YPFlashMode {
@@ -54,7 +48,6 @@ extension YPFlashMode {
         switch self {
         case .on: return YPConfig.icons.flashOnIcon
         case .off: return YPConfig.icons.flashOffIcon
-        case .auto: return YPConfig.icons.flashAutoIcon
         }
     }
 }

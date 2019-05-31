@@ -6,14 +6,19 @@
 //  Copyright © 2018 Yummypets. All rights reserved.
 //
 
-import UIKit
-import Foundation
 import AVFoundation
+import Foundation
+import UIKit
 
 // MARK: - Global functions
 
 func deviceForPosition(_ p: AVCaptureDevice.Position) -> AVCaptureDevice? {
-    for device in AVCaptureDevice.devices(for: AVMediaType.video) where device.position == p {
+    let discoverySession = AVCaptureDevice.DiscoverySession(
+        deviceTypes: [.builtInDualCamera, .builtInTelephotoCamera, .builtInTrueDepthCamera, .builtInWideAngleCamera],
+        mediaType: .video,
+        position: .unspecified
+    )
+    for device in discoverySession.devices where device.position == p {
         return device
     }
     return nil
@@ -30,7 +35,7 @@ func thumbnailFromVideoPath(_ path: URL) -> UIImage {
         image = try gen.copyCGImage(at: time, actualTime: &actualTime)
         let thumbnail = UIImage(cgImage: image)
         return thumbnail
-    } catch { }
+    } catch {}
     return UIImage()
 }
 

@@ -14,14 +14,14 @@ extension AVCaptureDevice {
         do {
             try lockForConfiguration()
             switch torchMode {
-            case .auto:
-                torchMode = .on
             case .on:
                 torchMode = .off
             case .off:
-                torchMode = .auto
+                torchMode = .on
+            default:
+                break
             }
             unlockForConfiguration()
-        } catch _ { }
+        } catch _ {}
     }
 }

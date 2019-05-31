@@ -9,13 +9,12 @@
 import UIKit
 
 internal extension CGRect {
-    
     func differenceWith(rect: CGRect,
                         removedHandler: (CGRect) -> Void,
                         addedHandler: (CGRect) -> Void) {
         if rect.intersects(self) {
-            let oldMaxY = self.maxY
-            let oldMinY = self.minY
+            let oldMaxY = maxY
+            let oldMinY = minY
             let newMaxY = rect.maxY
             let newMinY = rect.minY
             if newMaxY > oldMaxY {

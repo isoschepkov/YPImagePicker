@@ -7,10 +7,8 @@
 //
 
 import UIKit
-import Stevia
 
 class YPCameraView: UIView, UIGestureRecognizerDelegate {
-    
     let focusView = UIView(frame: CGRect(x: 0, y: 0, width: 90, height: 90))
     let previewViewContainer = UIView()
     let buttonsContainer = UIView()
@@ -22,7 +20,7 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
 
     convenience init(overlayView: UIView? = nil) {
         self.init(frame: .zero)
-        
+
         if let overlayView = overlayView {
             // View Hierarchy
             sv(
@@ -30,9 +28,9 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
                 overlayView,
                 progressBar,
                 timeElapsedLabel,
-                flashButton,
-                flipButton,
                 buttonsContainer.sv(
+                    flashButton,
+                    flipButton,
                     shotButton
                 )
             )
@@ -42,20 +40,20 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
                 previewViewContainer,
                 progressBar,
                 timeElapsedLabel,
-                flashButton,
-                flipButton,
                 buttonsContainer.sv(
+                    flashButton,
+                    flipButton,
                     shotButton
                 )
             )
         }
-        
+
         // Layout
         let isIphone4 = UIScreen.main.bounds.height == 480
         let sideMargin: CGFloat = isIphone4 ? 20 : 0
         layout(
             0,
-            |-sideMargin-previewViewContainer-sideMargin-|,
+            |-sideMargin - previewViewContainer - sideMargin-|,
             -2,
             |progressBar|,
             0,
@@ -66,15 +64,15 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
 
         overlayView?.followEdges(previewViewContainer)
 
-        |-(15+sideMargin)-flashButton.size(42)
-        flashButton.Bottom == previewViewContainer.Bottom - 15
+        |-(30 + sideMargin) - flashButton.size(48)
+        flashButton.centerVertically()
 
-        flipButton.size(42)-(15+sideMargin)-|
-        flipButton.Bottom == previewViewContainer.Bottom - 15
-        
-        timeElapsedLabel-(15+sideMargin)-|
+        flipButton.size(48) - (30 + sideMargin)-|
+        flipButton.centerVertically()
+
+        timeElapsedLabel - (15 + sideMargin)-|
         timeElapsedLabel.Top == previewViewContainer.Top + 15
-        
+
         shotButton.centerVertically()
         shotButton.size(84).centerHorizontally()
 
@@ -89,10 +87,16 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
         }
         progressBar.style { p in
             p.trackTintColor = .clear
-            p.tintColor = .red
+            p.tintColor = YPImagePickerConfiguration.shared.colors.tintColor
         }
+        flashButton.backgroundColor = Asset.darkNine.color
         flashButton.setImage(YPConfig.icons.flashOffIcon, for: .normal)
+        flashButton.layer.cornerRadius = 24
+        flashButton.clipsToBounds = true
+        flipButton.backgroundColor = Asset.darkNine.color
         flipButton.setImage(YPConfig.icons.loopIcon, for: .normal)
+        flipButton.layer.cornerRadius = 24
+        flipButton.clipsToBounds = true
         shotButton.setImage(YPConfig.icons.capturePhotoImage, for: .normal)
     }
 }
