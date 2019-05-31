@@ -6,6 +6,7 @@
 //  Copyright © 2018 Yummypets. All rights reserved.
 //
 
+import Stevia
 import UIKit
 
 class YPSelectionsGalleryView: UIView {

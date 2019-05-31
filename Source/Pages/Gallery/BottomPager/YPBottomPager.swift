@@ -6,6 +6,7 @@
 //  Copyright © 2016 Yummypets. All rights reserved.
 //
 
+import Stevia
 import UIKit
 
 protocol YPBottomPagerDelegate: class {

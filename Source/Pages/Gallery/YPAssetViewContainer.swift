@@ -8,6 +8,7 @@
 
 import AVFoundation
 import Foundation
+import Stevia
 import UIKit
 
 /// The container for asset (video or image). It containts the YPGridView and YPAssetZoomableView.

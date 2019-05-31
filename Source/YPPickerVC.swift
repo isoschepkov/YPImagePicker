@@ -8,6 +8,7 @@
 
 import Foundation
 import Photos
+import Stevia
 
 protocol ImagePickerDelegate: AnyObject {
     func noPhotos()

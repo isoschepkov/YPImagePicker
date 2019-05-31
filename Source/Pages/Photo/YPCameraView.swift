@@ -6,6 +6,7 @@
 //  Copyright © 2015 Yummypets. All rights reserved.
 //
 
+import Stevia
 import UIKit
 
 class YPCameraView: UIView, UIGestureRecognizerDelegate {

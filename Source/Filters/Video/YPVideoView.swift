@@ -7,6 +7,7 @@
 //
 
 import AVFoundation
+import Stevia
 import UIKit
 
 /// A video view that contains video layer, supports play, pause and other actions.

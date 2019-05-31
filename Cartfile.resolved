@@ -1,2 +1,2 @@
-github "HHK1/PryntTrimmerView" "4.0.0"
-github "semyonbaryshev/Stevia" "4.5.0"
+github "HHK1/PryntTrimmerView"
+git "https://github.com/semyonbaryshev/Stevia.git" "master"

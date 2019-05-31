@@ -6,6 +6,7 @@
 //  Copyright © 2017 Yummypets. All rights reserved.
 //
 
+import Stevia
 import UIKit
 
 class YPAlbumView: UIView {
