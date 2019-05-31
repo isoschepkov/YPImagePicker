@@ -16,7 +16,8 @@ class YPMultipleSelectionButton: UIView {
         didSet {
             if on {
                 blurEffectView.isHidden = true
-                backgroundColor = Asset.badgeBgSolid.color
+                backgroundColor = YPImagePickerConfiguration.shared.colors.multipleSelectionIconColor ??
+                    YPImagePickerConfiguration.shared.colors.tintColor
             } else {
                 blurEffectView.isHidden = false
                 backgroundColor = .clear
@@ -33,7 +34,7 @@ class YPMultipleSelectionButton: UIView {
         blurEffectView.fillContainer()
 
         iconImageView.centerHorizontally().centerVertically().size(20)
-        iconImageView.image = Asset.ypMultipleSelection.image
+        iconImageView.image = YPImagePickerConfiguration.shared.icons.multipleSelectionIcon
         iconImageView.contentMode = .scaleAspectFit
 
         layer.cornerRadius = 17

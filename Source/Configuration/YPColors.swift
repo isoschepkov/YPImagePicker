@@ -22,6 +22,10 @@ public struct YPColors {
     /// Default is nil, which takes tintColor.
     public var multipleItemsSelectedCircleColor: UIColor?
 
+    /// A color for background of multiple section button
+    /// Default is nil which takes tintColor.
+    public var multipleSelectionIconColor: UIColor?
+
     /// The background color of the bottom of photo and video screens.
     public var photoVideoScreenBackground: UIColor = .white
 
@@ -33,6 +37,9 @@ public struct YPColors {
 
     /// The background color of the library colleciton view
     public var libraryBackground = UIColor.white
+
+    /// The background color for flash and flib buttons
+    public var flashAndFlipButtonBackground = UIColor.clear
 
     /// Title color for the library in the navigation bar
     public var libraryTitleNavigationBarColor: UIColor?

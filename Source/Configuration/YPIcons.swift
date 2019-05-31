@@ -22,4 +22,6 @@ public struct YPIcons {
     public var captureVideoImage: UIImage = UIImage() // "yp_iconVideoCapture"
     public var captureVideoOnImage: UIImage = UIImage() // "yp_iconVideoCaptureRecording"
     public var playImage: UIImage = UIImage() // "yp_play"
+    public var multipleSelectionIcon: UIImage = UIImage()
+    public var singleSelectionIcon: UIImage = UIImage()
 }

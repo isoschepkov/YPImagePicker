@@ -90,11 +90,11 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
             p.trackTintColor = .clear
             p.tintColor = YPImagePickerConfiguration.shared.colors.tintColor
         }
-        flashButton.backgroundColor = Asset.darkNine.color
+        flashButton.backgroundColor = YPImagePickerConfiguration.shared.colors.flashAndFlipButtonBackground
         flashButton.setImage(YPConfig.icons.flashOffIcon, for: .normal)
         flashButton.layer.cornerRadius = 24
         flashButton.clipsToBounds = true
-        flipButton.backgroundColor = Asset.darkNine.color
+        flipButton.backgroundColor = YPImagePickerConfiguration.shared.colors.flashAndFlipButtonBackground
         flipButton.setImage(YPConfig.icons.loopIcon, for: .normal)
         flipButton.layer.cornerRadius = 24
         flipButton.clipsToBounds = true

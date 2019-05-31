@@ -13,7 +13,7 @@ class YPSingleSelectionIndicator: UIImageView {
     convenience init() {
         self.init(frame: .zero)
 
-        image = Asset.doneIcon.image
+        image = YPImagePickerConfiguration.shared.icons.singleSelectionIcon
         contentMode = .scaleAspectFit
     }
 }

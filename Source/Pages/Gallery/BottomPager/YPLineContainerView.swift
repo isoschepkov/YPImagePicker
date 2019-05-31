@@ -6,6 +6,7 @@
 //  Copyright © 2019 Heads and Hands. All rights reserved.
 //
 
+import Stevia
 import UIKit
 
 class YPLineContainerView: UIView {
