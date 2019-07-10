@@ -125,6 +125,8 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         super.viewWillAppear(animated)
         cameraVC?.v.shotButton.isEnabled = true
 
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.largeTitleDisplayMode = .never
         updateMode(with: currentController)
     }
 
