@@ -15,6 +15,7 @@ class YPVideoCaptureHelper: NSObject {
     public var isRecording: Bool { return videoOutput.isRecording }
     public var didCaptureVideo: ((URL) -> Void)?
     public var videoRecordingProgress: ((Float, TimeInterval) -> Void)?
+    public var recordedAssetTooShort: (() -> Void)?
 
     private let session = AVCaptureSession()
     private var timer = Timer()
@@ -213,7 +214,7 @@ class YPVideoCaptureHelper: NSObject {
 
     /// This enables to get the correct orientation even when the device is locked for orientation \o/
     private func checkOrientation(completion: @escaping (_ orientation: AVCaptureVideoOrientation?) -> Void) {
-        motionManager.accelerometerUpdateInterval = 5
+        motionManager.accelerometerUpdateInterval = 0.1
         motionManager.startAccelerometerUpdates(to: OperationQueue()) { [weak self] data, _ in
             self?.motionManager.stopAccelerometerUpdates()
             guard let data = data else {
@@ -264,9 +265,14 @@ extension YPVideoCaptureHelper: AVCaptureFileOutputRecordingDelegate {
                            didFinishRecordingTo outputFileURL: URL,
                            from _: [AVCaptureConnection],
                            error _: Error?) {
-        YPVideoProcessor.cropToSquare(filePath: outputFileURL) { [weak self] url in
-            guard let _self = self, let u = url else { return }
-            _self.didCaptureVideo?(u)
+        let asset = AVAsset(url: outputFileURL)
+        if CMTimeGetSeconds(asset.duration) < YPConfig.video.minimumTimeLimit {
+            recordedAssetTooShort?()
+        } else {
+            YPVideoProcessor.cropToSquare(asset: asset) { [weak self] url in
+                guard let _self = self, let u = url else { return }
+                _self.didCaptureVideo?(u)
+            }
         }
         timer.invalidate()
     }

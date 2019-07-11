@@ -32,6 +32,13 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
                 $0.timeElapsed = timeElapsed
             }
         }
+        videoHelper.recordedAssetTooShort = { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.present(YPAlert.videoTooShortAlert(self.v), animated: true, completion: nil)
+            self.resetVisualState()
+        }
     }
 
     // MARK: - View LifeCycle

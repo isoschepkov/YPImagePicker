@@ -221,6 +221,15 @@ public struct YPConfigVideo {
     /// The minimum duration allowed for the trimming.
     /// The handles won't pan further if the minimum duration is attained.
     public var trimmerMinDuration: Double = 3.0
+
+    /// Called when recorded video starts processing
+    public var onStartVideoProcessing: (() -> Void)? = nil
+
+    /// Called when recorded video is processing
+    public var onProgressVideoProcessing: ((Float) -> Void)? = nil
+
+    /// Called when recorded video finishes processing
+    public var onFinishVideoProcessing: (() -> Void)? = nil
 }
 
 public enum YPlibraryMediaType {

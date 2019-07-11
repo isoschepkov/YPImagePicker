@@ -13,6 +13,9 @@ import UIKit
  This class contains all support and helper methods to process the videos
  */
 class YPVideoProcessor {
+    static private var exporter: AVAssetExportSession?
+    static private var exporterProgressTimer: Timer?
+
     /// Creates an output path and removes the file in temp folder if existing
     ///
     /// - Parameters:
@@ -50,12 +53,11 @@ class YPVideoProcessor {
     /*
      Crops the video to square by video height from the top of the video.
      */
-    static func cropToSquare(filePath: URL, completion: @escaping (_ outputURL: URL?) -> Void) {
+    static func cropToSquare(asset: AVAsset, completion: @escaping (_ outputURL: URL?) -> Void) {
         // output file
         let outputPath = makeVideoPathURL(temporaryFolder: true, fileName: "squaredVideoFromCamera")
 
         // input file
-        let asset = AVAsset(url: filePath)
         let composition = AVMutableComposition()
         composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
 
@@ -72,7 +74,7 @@ class YPVideoProcessor {
         videoComposition.renderSize = CGSize(width: CGFloat(clipVideoTrack.naturalSize.height), height: CGFloat(clipVideoTrack.naturalSize.height))
         videoComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
         let instruction = AVMutableVideoCompositionInstruction()
-        instruction.timeRange = CMTimeRangeMake(start: CMTime.zero, duration: CMTimeMakeWithSeconds(60, preferredTimescale: 30))
+        instruction.timeRange = CMTimeRangeMake(start: CMTime.zero, duration: CMTimeMakeWithSeconds(YPConfig.video.recordingTimeLimit + 1, preferredTimescale: 30))
 
         // rotate to potrait
         let transformer = AVMutableVideoCompositionLayerInstruction(assetTrack: clipVideoTrack)
@@ -84,13 +86,27 @@ class YPVideoProcessor {
         videoComposition.instructions = [instruction]
 
         // exporter
-        let exporter = AVAssetExportSession(asset: asset, presetName: YPConfig.video.compression)
+        exporter?.cancelExport()
+        exporter = AVAssetExportSession(asset: asset, presetName: YPConfig.video.compression)
         exporter?.videoComposition = videoComposition
         exporter?.outputURL = outputPath
         exporter?.shouldOptimizeForNetworkUse = true
         exporter?.outputFileType = YPConfig.video.fileType
 
+        YPConfig.video.onStartVideoProcessing?()
+
+        exporterProgressTimer?.invalidate()
+        exporterProgressTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+            guard let exporterUnwrapped = exporter,
+            exporterUnwrapped.status == .exporting else {
+                return
+            }
+            YPConfig.video.onProgressVideoProcessing?(exporterUnwrapped.progress)
+        }
+
         exporter?.exportAsynchronously {
+            YPConfig.video.onFinishVideoProcessing?()
+            exporterProgressTimer?.invalidate()
             if exporter?.status == .completed {
                 DispatchQueue.main.async(execute: {
                     completion(outputPath)
