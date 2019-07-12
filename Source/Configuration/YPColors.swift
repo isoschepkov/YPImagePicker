@@ -26,6 +26,9 @@ public struct YPColors {
     /// Default is nil which takes tintColor.
     public var multipleSelectionIconColor: UIColor?
 
+    /// A color for background of multiple section button in off state
+    public var multipleSelectionIconOffColor: UIColor = UIColor.clear
+
     /// The background color of the bottom of photo and video screens.
     public var photoVideoScreenBackground: UIColor = .white
 

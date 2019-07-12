@@ -70,14 +70,14 @@ class YPAssetViewContainer: UIView {
             // Crop Button
             squareCropButton.setImage(YPConfig.icons.cropIcon, for: .normal)
             sv(squareCropButton)
-            squareCropButton.size(42)
+            squareCropButton.size(32)
             |-15 - squareCropButton
             squareCropButton.Bottom == zoomableView!.Bottom - 15
         }
 
         // Multiple selection button
         sv(multipleSelectionButton)
-        multipleSelectionButton.size(34)
+        multipleSelectionButton.size(32)
         multipleSelectionButton - 15-|
         multipleSelectionButton.on = false
         multipleSelectionButton.Bottom == zoomableView!.Bottom - 15

@@ -9,18 +9,15 @@
 import UIKit
 
 class YPMultipleSelectionButton: UIView {
-    private let blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
     private let iconImageView = UIImageView()
 
     var on: Bool = false {
         didSet {
             if on {
-                blurEffectView.isHidden = true
                 backgroundColor = YPImagePickerConfiguration.shared.colors.multipleSelectionIconColor ??
                     YPImagePickerConfiguration.shared.colors.tintColor
             } else {
-                blurEffectView.isHidden = false
-                backgroundColor = .clear
+                backgroundColor = YPImagePickerConfiguration.shared.colors.multipleSelectionIconOffColor
             }
         }
     }
@@ -28,16 +25,14 @@ class YPMultipleSelectionButton: UIView {
     convenience init() {
         self.init(frame: .zero)
         sv(
-            blurEffectView,
             iconImageView
         )
-        blurEffectView.fillContainer()
 
         iconImageView.centerHorizontally().centerVertically().size(20)
         iconImageView.image = YPImagePickerConfiguration.shared.icons.multipleSelectionIcon
         iconImageView.contentMode = .scaleAspectFit
 
-        layer.cornerRadius = 17
+        layer.cornerRadius = 16
         clipsToBounds = true
         isUserInteractionEnabled = true
     }
