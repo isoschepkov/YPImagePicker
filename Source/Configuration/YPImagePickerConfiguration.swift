@@ -196,6 +196,9 @@ public struct YPConfigLibrary {
 
     /// Empty view used when library is empty
     public var emptyView: UIView?
+
+    /// Should show grid view
+    public var showGrid: Bool = true
 }
 
 /// Encapsulates video specific settings.

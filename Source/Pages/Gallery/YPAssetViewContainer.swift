@@ -136,7 +136,7 @@ extension YPAssetViewContainer: YPAssetZoomableViewDelegate {
     }
 
     public func ypAssetZoomableViewScrollViewDidZoom() {
-        if isShown {
+        if YPConfig.library.showGrid, isShown {
             UIView.animate(withDuration: 0.1) {
                 self.grid.alpha = 1
             }
@@ -166,7 +166,7 @@ extension YPAssetViewContainer: UIGestureRecognizerDelegate {
     private func handleTouchDown(sender: UILongPressGestureRecognizer) {
         switch sender.state {
         case .began:
-            if isShown {
+            if YPConfig.library.showGrid, isShown {
                 UIView.animate(withDuration: 0.1) {
                     self.grid.alpha = 1
                 }
