@@ -24,6 +24,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     internal let mediaManager = LibraryMediaManager()
     internal var latestImageTapped = ""
     internal let panGestureHelper = PanGestureHelper()
+    internal var emptyView: UIView?
 
     // MARK: - Init
 
@@ -89,6 +90,14 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
 
         v.viewWithTag(Constants.topViewTag)?.backgroundColor = YPImagePickerConfiguration.shared.colors.libraryBackground
+
+        self.emptyView = YPConfig.library.emptyView
+
+        if let emptyView = self.emptyView {
+            v.sv(emptyView)
+            emptyView.fillContainer()
+            emptyView.isHidden = true
+        }
     }
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -241,7 +250,13 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             mediaManager.fetchResult = PHAsset.fetchAssets(with: options)
         }
 
-        if mediaManager.fetchResult.count > 0 {
+        updateStateForCount(mediaManager.fetchResult.count)
+        scrollToTop()
+    }
+
+    func updateStateForCount(_ count: Int) {
+        if count > 0 {
+            emptyView?.isHidden = true
             changeAsset(mediaManager.fetchResult[0])
             v.collectionView.reloadData()
             v.collectionView.selectItem(at: IndexPath(row: 0, section: 0),
@@ -251,9 +266,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 addToSelection(indexPath: IndexPath(row: 0, section: 0))
             }
         } else {
+            selection = []
+            emptyView?.isHidden = false
             delegate?.noPhotosForOptions()
         }
-        scrollToTop()
     }
 
     func buildPHFetchOptions() -> PHFetchOptions {

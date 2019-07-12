@@ -193,6 +193,9 @@ public struct YPConfigLibrary {
 
     /// Font for the library title in navigation bar
     public var titleNavigationBarFont: UIFont?
+
+    /// Empty view used when library is empty
+    public var emptyView: UIView?
 }
 
 /// Encapsulates video specific settings.

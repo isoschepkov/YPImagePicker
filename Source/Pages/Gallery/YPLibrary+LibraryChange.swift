@@ -43,6 +43,7 @@ extension YPLibraryVC: PHPhotoLibraryChangeObserver {
                     })
                 }
                 self.mediaManager.resetCachedAssets()
+                self.updateStateForCount(self.mediaManager.fetchResult.count)
             }
         }
     }
