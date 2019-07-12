@@ -416,17 +416,20 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 }
 
                 // Fill result media items array
-                var resultMediaItems: [YPMediaItem] = []
                 let asyncGroup = DispatchGroup()
 
-                for asset in selectedAssets {
+                var orderedResults: [YPMediaItem?] = Array<YPMediaItem?>.init(repeating: nil, count: selectedAssets.count)
+
+                for (index, asset) in selectedAssets.enumerated() {
                     asyncGroup.enter()
 
                     switch asset.asset.mediaType {
                     case .image:
                         self.fetchImageAndCrop(for: asset.asset, withCropRect: asset.cropRect) { image, exifMeta in
                             let photo = YPMediaPhoto(image: image.resizedImageIfNeeded(), exifMeta: exifMeta, asset: asset.asset)
-                            resultMediaItems.append(YPMediaItem.photo(p: photo))
+                            if orderedResults.indices.contains(index) {
+                                orderedResults[index] = YPMediaItem.photo(p: photo)
+                            }
                             asyncGroup.leave()
                         }
 
@@ -434,7 +437,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                         self.checkVideoLengthAndCrop(for: asset.asset, withCropRect: asset.cropRect) { videoURL in
                             let videoItem = YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
                                                          videoURL: videoURL, asset: asset.asset)
-                            resultMediaItems.append(YPMediaItem.video(v: videoItem))
+                            if orderedResults.indices.contains(index) {
+                                orderedResults[index] = YPMediaItem.video(v: videoItem)
+                            }
                             asyncGroup.leave()
                         }
                     default:
@@ -443,6 +448,12 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 }
 
                 asyncGroup.notify(queue: .main) {
+                    var resultMediaItems: [YPMediaItem] = []
+                    for result in orderedResults {
+                        if let resultUnwrapped = result {
+                            resultMediaItems.append(resultUnwrapped)
+                        }
+                    }
                     multipleItemsCallback(resultMediaItems)
                     self.delegate?.libraryViewFinishedLoading()
                 }
