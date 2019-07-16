@@ -63,13 +63,22 @@ class LibraryMediaManager {
         }
     }
 
-    func fetchVideoUrlAndCrop(for videoAsset: PHAsset, cropRect: CGRect, callback: @escaping (URL) -> Void) {
+    func fetchVideoUrlAndCrop(
+        for videoAsset: PHAsset,
+        cropRect: CGRect,
+        callback: @escaping (URL) -> Void,
+        handler: YPTaskHandler? = nil
+    ) {
         let videosOptions = PHVideoRequestOptions()
         videosOptions.deliveryMode = .highQualityFormat
         videosOptions.isNetworkAccessAllowed = true
         imageManager?.requestAVAsset(forVideo: videoAsset, options: videosOptions) { asset, _, _ in
             do {
-                guard let asset = asset else { print("⚠️ PHCachingImageManager >>> Don't have the asset"); return }
+                guard let asset = asset else {
+                    print("⚠️ PHCachingImageManager >>> Don't have the asset")
+                    handler?.failure()
+                    return
+                }
 
                 let assetComposition = AVMutableComposition()
                 let trackTimeRange = CMTimeRangeMake(start: CMTime.zero, duration: asset.duration)
@@ -81,6 +90,7 @@ class LibraryMediaManager {
                     .addMutableTrack(withMediaType: .video,
                                      preferredTrackID: kCMPersistentTrackID_Invalid) else {
                     print("⚠️ PHCachingImageManager >>> Problems with video track")
+                                        handler?.failure()
                     return
                 }
                 if let audioTrack = asset.tracks(withMediaType: AVMediaType.audio).first,
@@ -138,6 +148,7 @@ class LibraryMediaManager {
                             if let index = self.currentExportSessions.firstIndex(of: exportSession!) {
                                 self.currentExportSessions.remove(at: index)
                             }
+                            self.clearTimer()
                         } else {
                             let error = exportSession?.error
                             print("error exporting video \(String(describing: error))")
@@ -146,6 +157,7 @@ class LibraryMediaManager {
                 })
             } catch let error {
                 print("⚠️ PHCachingImageManager >>> \(error)")
+                handler?.failure()
             }
         }
     }
@@ -169,6 +181,20 @@ class LibraryMediaManager {
     func forseCancelExporting() {
         for s in currentExportSessions {
             s.cancelExport()
+        }
+    }
+
+    func clearExport() {
+        forseCancelExporting()
+        currentExportSessions = []
+        clearTimer()
+    }
+
+    private func clearTimer() {
+        exportTimer?.invalidate()
+        exportTimer = nil
+        DispatchQueue.main.async { [weak self] in
+            self?.v?.updateProgress(0)
         }
     }
 }

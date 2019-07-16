@@ -199,6 +199,14 @@ public struct YPConfigLibrary {
 
     /// Should show grid view
     public var showGrid: Bool = true
+
+    /// Closure which is going to be executed on start of resumable queue.
+    /// Gets as its first parameter a closure which can be called to signal when current
+    /// queue task should be interrupted
+    public var onStartResumableQueue: YPOnStartResumableQueue?
+
+    /// Closure which is going to be executed on stop of resumable queue.
+    public var onStopResumableQueue: (() -> Void)?
 }
 
 /// Encapsulates video specific settings.

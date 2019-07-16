@@ -25,6 +25,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     internal var latestImageTapped = ""
     internal let panGestureHelper = PanGestureHelper()
     internal var emptyView: UIView?
+    internal var resumableQueue = YPResumableQueue()
 
     // MARK: - Init
 
@@ -422,6 +423,12 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 return (asset, $0.cropRect)
             }
 
+            self.resumableQueue.stop()
+            self.resumableQueue.onFailure = { [weak self] in
+                self?.mediaManager.clearExport()
+                self?.delegate?.libraryViewFinishedLoading()
+            }
+
             // Multiple selection
             if self.multipleSelectionEnabled && self.selection.count > 1 {
                 // Check video length
@@ -431,62 +438,121 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     }
                 }
 
-                // Fill result media items array
-                let asyncGroup = DispatchGroup()
-
                 var orderedResults: [YPMediaItem?] = Array<YPMediaItem?>.init(repeating: nil, count: selectedAssets.count)
 
                 for (index, asset) in selectedAssets.enumerated() {
-                    asyncGroup.enter()
-
+                    var task: YPTask?
                     switch asset.asset.mediaType {
                     case .image:
-                        self.fetchImageAndCrop(for: asset.asset, withCropRect: asset.cropRect) { image, exifMeta in
-                            let photo = YPMediaPhoto(image: image.resizedImageIfNeeded(), exifMeta: exifMeta, asset: asset.asset)
-                            if orderedResults.indices.contains(index) {
-                                orderedResults[index] = YPMediaItem.photo(p: photo)
-                            }
-                            asyncGroup.leave()
-                        }
+                        task = YPTask(
+                            start: { [weak self] handler in
+                                guard let self = self else {
+                                    handler.failure()
+                                    return
+                                }
+                                self.fetchImageAndCrop(for: asset.asset, withCropRect: asset.cropRect) { image, exifMeta in
+                                    let photo = YPMediaPhoto(image: image.resizedImageIfNeeded(), exifMeta: exifMeta, asset: asset.asset)
+                                    if orderedResults.indices.contains(index) {
+                                        orderedResults[index] = YPMediaItem.photo(p: photo)
+                                    }
+                                    handler.completion()
+                                }
+                            },
+                            onRestart: {}
+                        )
 
                     case .video:
-                        self.checkVideoLengthAndCrop(for: asset.asset, withCropRect: asset.cropRect) { videoURL in
-                            let videoItem = YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
-                                                         videoURL: videoURL, asset: asset.asset)
-                            if orderedResults.indices.contains(index) {
-                                orderedResults[index] = YPMediaItem.video(v: videoItem)
+                        task = YPTask(
+                            start: { [weak self] handler in
+                                guard let self = self else {
+                                    handler.failure()
+                                    return
+                                }
+                                self.checkVideoLengthAndCrop(for: asset.asset, withCropRect: asset.cropRect) { videoURL in
+                                    let videoItem = YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
+                                                                 videoURL: videoURL, asset: asset.asset)
+                                    if orderedResults.indices.contains(index) {
+                                        orderedResults[index] = YPMediaItem.video(v: videoItem)
+                                    }
+                                    handler.completion()
+                                }
+                            },
+                            onRestart: { [weak self] in
+                                self?.mediaManager.clearExport()
                             }
-                            asyncGroup.leave()
-                        }
+                        )
                     default:
                         break
                     }
-                }
-
-                asyncGroup.notify(queue: .main) {
-                    var resultMediaItems: [YPMediaItem] = []
-                    for result in orderedResults {
-                        if let resultUnwrapped = result {
-                            resultMediaItems.append(resultUnwrapped)
-                        }
+                    if let unwrappedTask = task {
+                        self.resumableQueue.appendTask(unwrappedTask)
                     }
-                    multipleItemsCallback(resultMediaItems)
-                    self.delegate?.libraryViewFinishedLoading()
+                }
+                self.resumableQueue.onCompletion = {
+                    DispatchQueue.main.async { [weak self] in
+                        var resultMediaItems: [YPMediaItem] = []
+                        for result in orderedResults {
+                            if let resultUnwrapped = result {
+                                resultMediaItems.append(resultUnwrapped)
+                            }
+                        }
+                        multipleItemsCallback(resultMediaItems)
+                        self?.delegate?.libraryViewFinishedLoading()
+                    }
                 }
             } else {
                 let asset = selectedAssets.first!.asset
                 switch asset.mediaType {
                 case .video:
-                    self.checkVideoLengthAndCrop(for: asset, callback: { videoURL in
+                    var videoURLWrapped: URL?
+                    self.resumableQueue.appendTask(YPTask(
+                        start: { [weak self] handler in
+                            guard let self = self else {
+                                handler.failure()
+                                return
+                            }
+                            self.checkVideoLengthAndCrop(for: asset, callback: { videoURL in
+                                videoURLWrapped = videoURL
+                                handler.completion()
+                            })
+                        },
+                        onRestart: { [weak self] in
+                            self?.mediaManager.clearExport()
+                        }
+                    ))
+                    self.resumableQueue.onCompletion = {
+                        guard let videoURL = videoURLWrapped else {
+                            return
+                        }
                         DispatchQueue.main.async {
                             self.delegate?.libraryViewFinishedLoading()
                             let video = YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
                                                      videoURL: videoURL, asset: asset)
                             videoCallback(video)
                         }
-                    })
+                    }
                 case .image:
-                    self.fetchImageAndCrop(for: asset) { image, exifMeta in
+                    var imageWrapped: UIImage?
+                    var exifMetaWrapped: [String: Any]?
+                    self.resumableQueue.appendTask(YPTask(
+                        start: { [weak self] handler in
+                            guard let self = self else {
+                                handler.failure()
+                                return
+                            }
+                            self.fetchImageAndCrop(for: asset) { image, exifMeta in
+                                imageWrapped = image
+                                exifMetaWrapped = exifMeta
+                                handler.completion()
+                            }
+                        },
+                        onRestart: {}
+                    ))
+                    self.resumableQueue.onCompletion = {
+                        guard let image = imageWrapped,
+                            let exifMeta = exifMetaWrapped else {
+                                return
+                        }
                         DispatchQueue.main.async {
                             self.delegate?.libraryViewFinishedLoading()
                             let photo = YPMediaPhoto(image: image.resizedImageIfNeeded(),
@@ -499,6 +565,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     return
                 }
             }
+
+            self.resumableQueue.start()
         }
     }
 
