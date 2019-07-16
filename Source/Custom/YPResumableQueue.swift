@@ -44,6 +44,7 @@ class YPResumableQueue {
     var stopOnFailure = true
     private var tasks: [YPTask] = []
     private var isRunning = false
+    private var isInterrupted = false
 
     func appendTask(_ task: YPTask) {
         tasks.append(task)
@@ -62,11 +63,18 @@ class YPResumableQueue {
 
     func start() {
         YPConfig.library.onStartResumableQueue?(
-            {
-                [weak self] in self?.resume()
+            { [weak self] in
+                guard let self = self else {
+                    return
+                }
+                if self.isInterrupted {
+                    self.isInterrupted = false
+                    self.resume()
+                }
             },
-            {
-                [weak self] in self?.interruptCurrentTask()
+            { [weak self] in
+                self?.interruptCurrentTask()
+                self?.isInterrupted = true
             }
         )
         resume()
@@ -129,8 +137,7 @@ class YPResumableQueue {
             break
         case .interrupted, .failed:
             currentTask.status = .running
-            // Add some delay to prevent connection error when resuming from background
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.global(qos: .userInitiated).async {
                 currentTask.onRestart()
                 currentTask.start(handler)
             }
