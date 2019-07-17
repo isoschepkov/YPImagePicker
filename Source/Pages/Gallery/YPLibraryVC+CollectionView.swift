@@ -59,25 +59,50 @@ extension YPLibraryVC {
         if let positionIndex = selection.firstIndex(where: { $0.assetIdentifier == mediaManager.fetchResult[indexPath.row].localIdentifier }) {
             selection.remove(at: positionIndex)
 
-            // Refresh the numbers
-            var selectedIndexPaths = [IndexPath]()
-            mediaManager.fetchResult.enumerateObjects { [unowned self] asset, index, _ in
-                if self.selection.contains(where: { $0.assetIdentifier == asset.localIdentifier }) {
-                    selectedIndexPaths.append(IndexPath(row: index, section: 0))
-                }
-            }
-            v.collectionView.reloadItems(at: selectedIndexPaths)
+            refreshSelection(indexPath: indexPath)
 
-            // Replace the current selected image with the previously selected one
-            if let previouslySelectedIndexPath = selectedIndexPaths.last {
-                v.collectionView.deselectItem(at: indexPath, animated: false)
-                v.collectionView.selectItem(at: previouslySelectedIndexPath, animated: false, scrollPosition: [])
-                currentlySelectedIndex = previouslySelectedIndexPath.row
-                changeAsset(mediaManager.fetchResult[previouslySelectedIndexPath.row])
-            }
-
-            checkLimit()
+//            // Refresh the numbers
+//            var selectedIndexPaths = [IndexPath]()
+//            mediaManager.fetchResult.enumerateObjects { [unowned self] asset, index, _ in
+//                if self.selection.contains(where: { $0.assetIdentifier == asset.localIdentifier }) {
+//                    selectedIndexPaths.append(IndexPath(row: index, section: 0))
+//                }
+//            }
+//            v.collectionView.reloadItems(at: selectedIndexPaths)
+//
+//            // Replace the current selected image with the previously selected one
+//            if let previouslySelectedIndexPath = selectedIndexPaths.last {
+//                v.collectionView.deselectItem(at: indexPath, animated: false)
+//                v.collectionView.selectItem(at: previouslySelectedIndexPath, animated: false, scrollPosition: [])
+//                currentlySelectedIndex = previouslySelectedIndexPath.row
+//                changeAsset(mediaManager.fetchResult[previouslySelectedIndexPath.row])
+//            }
+//
+//            checkLimit()
         }
+    }
+
+    func refreshSelection(indexPath: IndexPath? = nil) {
+        // Refresh the numbers
+        var selectedIndexPaths = [IndexPath]()
+        mediaManager.fetchResult.enumerateObjects { [unowned self] asset, index, _ in
+            if self.selection.contains(where: { $0.assetIdentifier == asset.localIdentifier }) {
+                selectedIndexPaths.append(IndexPath(row: index, section: 0))
+            }
+        }
+        v.collectionView.reloadItems(at: selectedIndexPaths)
+
+        // Replace the current selected image with the previously selected one
+        if let previouslySelectedIndexPath = selectedIndexPaths.last {
+            if let indexPath = indexPath {
+                v.collectionView.deselectItem(at: indexPath, animated: false)
+            }
+            v.collectionView.selectItem(at: previouslySelectedIndexPath, animated: false, scrollPosition: [])
+            currentlySelectedIndex = previouslySelectedIndexPath.row
+            changeAsset(mediaManager.fetchResult[previouslySelectedIndexPath.row])
+        }
+
+        checkLimit()
     }
 
     /// Adds cell to selection

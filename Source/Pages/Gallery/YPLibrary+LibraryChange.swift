@@ -28,6 +28,13 @@ extension YPLibraryVC: PHPhotoLibraryChangeObserver {
                         let removedIndexes = collectionChanges!.removedIndexes
                         if (removedIndexes?.count ?? 0) != 0 {
                             collectionView.deleteItems(at: removedIndexes!.aapl_indexPathsFromIndexesWithSection(0))
+                            if let removedIndexesUnwrapped = removedIndexes {
+                                (removedIndexesUnwrapped as NSIndexSet).enumerate({ index, _ in
+                                    if let positionIndex = self.selection.firstIndex(where: { $0.index == index }) {
+                                        self.selection.remove(at: positionIndex)
+                                    }
+                                })
+                            }
                         }
                         let insertedIndexes = collectionChanges!.insertedIndexes
                         if (insertedIndexes?.count ?? 0) != 0 {
@@ -39,6 +46,7 @@ extension YPLibraryVC: PHPhotoLibraryChangeObserver {
                             if (changedIndexes?.count ?? 0) != 0 {
                                 collectionView.reloadItems(at: changedIndexes!.aapl_indexPathsFromIndexesWithSection(0))
                             }
+                            self.refreshSelection()
                         }
                     })
                 }
