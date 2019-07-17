@@ -161,7 +161,10 @@ extension YPLibraryVC: UICollectionViewDelegate {
         let previouslySelectedIndexPath = IndexPath(row: currentlySelectedIndex, section: 0)
         currentlySelectedIndex = indexPath.row
 
-        changeAsset(mediaManager.fetchResult[indexPath.row])
+        let willDeselect = multipleSelectionEnabled && isInSelectionPool(indexPath: indexPath)
+        if !willDeselect {
+            changeAsset(mediaManager.fetchResult[indexPath.row])
+        }
         panGestureHelper.resetToOriginalState()
 
         // Only scroll cell to top if preview is hidden.
