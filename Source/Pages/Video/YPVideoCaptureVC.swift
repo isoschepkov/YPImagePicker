@@ -9,9 +9,10 @@
 import UIKit
 
 public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
+    weak var videoCaptureDelegate: YPVideoCaptureDelegate?
     public var didCaptureVideo: ((URL) -> Void)?
 
-    private let videoHelper = YPVideoCaptureHelper()
+    var videoHelper = YPVideoCaptureHelper()
     private let v = YPCameraView(overlayView: nil)
     private var viewState = ViewState()
 
@@ -59,16 +60,18 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
     func start() {
         v.shotButton.isEnabled = false
         doAfterPermissionCheck { [weak self] in
-            guard let strongSelf = self else {
-                return
-            }
-            self?.videoHelper.start(previewView: strongSelf.v.previewViewContainer,
-                                    withVideoRecordingLimit: YPConfig.video.recordingTimeLimit,
-                                    completion: {
-                                        DispatchQueue.main.async {
-                                            self?.v.shotButton.isEnabled = true
-                                            self?.refreshState()
-                                        }
+            self?.videoCaptureDelegate?.willStartVideoCapture(completion: { [weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+                self?.videoHelper.start(previewView: strongSelf.v.previewViewContainer,
+                                        withVideoRecordingLimit: YPConfig.video.recordingTimeLimit,
+                                        completion: {
+                                            DispatchQueue.main.async {
+                                                self?.v.shotButton.isEnabled = true
+                                                self?.refreshState()
+                                            }
+                })
             })
         }
     }
@@ -133,8 +136,8 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
         }
     }
 
-    public func stopCamera() {
-        videoHelper.stopCamera()
+    public func stopCamera(completion: (() -> Void)? = nil) {
+        videoHelper.stopCamera(completion: completion)
     }
 
     // MARK: - Focus

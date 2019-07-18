@@ -11,8 +11,9 @@ import Photos
 import UIKit
 
 public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermissionCheckable {
+    weak var videoCaptureDelegate: YPVideoCaptureDelegate?
     public var didCapturePhoto: ((UIImage) -> Void)?
-    let photoCapture = newPhotoCapture()
+    var photoCapture = newPhotoCapture()
     let v: YPCameraView!
     public override func loadView() { view = v }
 
@@ -41,13 +42,15 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
 
     func start() {
         doAfterPermissionCheck { [weak self] in
-            guard let strongSelf = self else {
-                return
-            }
-            self?.photoCapture.start(with: strongSelf.v.previewViewContainer, completion: {
-                DispatchQueue.main.async {
-                    self?.refreshFlashButton()
+            self?.videoCaptureDelegate?.willStartVideoCapture(completion: { [weak self] in
+                guard let strongSelf = self else {
+                    return
                 }
+                self?.photoCapture.start(with: strongSelf.v.previewViewContainer, completion: {
+                    DispatchQueue.main.async {
+                        self?.refreshFlashButton()
+                    }
+                })
             })
         }
     }
@@ -74,8 +77,8 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
         YPHelper.animateFocusView(v.focusView)
     }
 
-    func stopCamera() {
-        photoCapture.stopCamera()
+    func stopCamera(completion: (() -> Void)? = nil) {
+        photoCapture.stopCamera(completion: completion)
     }
 
     @objc

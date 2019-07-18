@@ -37,7 +37,7 @@ extension YPPhotoCapture {
 
     func start(with previewView: UIView, completion: @escaping () -> Void) {
         self.previewView = previewView
-        sessionQueue.async { [weak self] in
+        sessionQueue?.async { [weak self] in
             guard let strongSelf = self else {
                 return
             }
@@ -52,7 +52,7 @@ extension YPPhotoCapture {
 
     func startCamera(completion: @escaping (() -> Void)) {
         if !session.isRunning {
-            sessionQueue.async { [weak self] in
+            sessionQueue?.async { [weak self] in
                 // Re-apply session preset
                 self?.session.sessionPreset = .photo
                 let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
@@ -68,11 +68,14 @@ extension YPPhotoCapture {
         }
     }
 
-    func stopCamera() {
+    func stopCamera(completion: (() -> Void)? = nil) {
         if session.isRunning {
-            sessionQueue.async { [weak self] in
+            sessionQueue?.async { [weak self] in
                 self?.session.stopRunning()
+                completion?()
             }
+        } else {
+            completion?()
         }
     }
 
@@ -103,7 +106,7 @@ extension YPPhotoCapture {
     // MARK: - Flip
 
     func flipCamera(completion: @escaping () -> Void) {
-        sessionQueue.async { [weak self] in
+        sessionQueue?.async { [weak self] in
             self?.flip()
             DispatchQueue.main.async {
                 completion()

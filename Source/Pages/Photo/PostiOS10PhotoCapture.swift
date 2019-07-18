@@ -11,7 +11,7 @@ import UIKit
 
 @available(iOS 10.0, *)
 class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDelegate {
-    let sessionQueue = DispatchQueue(label: "YPCameraVCSerialQueue", qos: .background)
+    var sessionQueue: DispatchQueue?
     let session = AVCaptureSession()
     var deviceInput: AVCaptureDeviceInput?
     var device: AVCaptureDevice? { return deviceInput?.device }

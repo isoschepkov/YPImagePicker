@@ -14,11 +14,16 @@ protocol ImagePickerDelegate: AnyObject {
     func noPhotos()
 }
 
+protocol YPVideoCaptureDelegate: AnyObject {
+    func willStartVideoCapture(completion: (() -> Void)?)
+}
+
 open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     let albumsManager = YPAlbumsManager()
     var shouldHideStatusBar = false
     var initialStatusBarHidden = false
     weak var imagePickerDelegate: ImagePickerDelegate?
+    private let sessionQueue = DispatchQueue(label: "YPVideoVCSerialQueue", qos: .background)
 
     open override var prefersStatusBarHidden: Bool {
         return (shouldHideStatusBar || initialStatusBarHidden) && YPConfig.hidesStatusBar
@@ -63,6 +68,8 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         // Camera
         if YPConfig.screens.contains(.photo) {
             cameraVC = YPCameraVC()
+            cameraVC?.photoCapture.sessionQueue = sessionQueue
+            cameraVC?.videoCaptureDelegate = self
             cameraVC?.didCapturePhoto = { [weak self] img in
                 self?.didSelectItems?([YPMediaItem.photo(p: YPMediaPhoto(image: img,
                                                                          fromCamera: true))])
@@ -72,6 +79,8 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         // Video
         if YPConfig.screens.contains(.video) {
             videoVC = YPVideoCaptureVC()
+            videoVC?.videoHelper.sessionQueue = sessionQueue
+            videoVC?.videoCaptureDelegate = self
             videoVC?.didCaptureVideo = { [weak self] videoURL in
                 self?.didSelectItems?([YPMediaItem
                         .video(v: YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
@@ -351,5 +360,11 @@ extension YPPickerVC: YPLibraryViewDelegate {
     public func noPhotosForOptions() {
         updateUI()
         self.imagePickerDelegate?.noPhotos()
+    }
+}
+
+extension YPPickerVC: YPVideoCaptureDelegate {
+    func willStartVideoCapture(completion: (() -> Void)?) {
+        completion?()
     }
 }

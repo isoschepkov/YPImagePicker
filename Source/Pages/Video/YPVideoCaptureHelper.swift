@@ -17,10 +17,10 @@ class YPVideoCaptureHelper: NSObject {
     public var videoRecordingProgress: ((Float, TimeInterval) -> Void)?
     public var recordedAssetTooShort: (() -> Void)?
 
+    var sessionQueue: DispatchQueue?
     private let session = AVCaptureSession()
     private var timer = Timer()
     private var dateVideoStarted = Date()
-    private let sessionQueue = DispatchQueue(label: "YPVideoVCSerialQueue")
     private var videoInput: AVCaptureDeviceInput?
     private var videoOutput = AVCaptureMovieFileOutput()
     private var videoRecordingTimeLimit: TimeInterval = 0
@@ -34,7 +34,7 @@ class YPVideoCaptureHelper: NSObject {
     public func start(previewView: UIView, withVideoRecordingLimit: TimeInterval, completion: @escaping () -> Void) {
         self.previewView = previewView
         videoRecordingTimeLimit = withVideoRecordingLimit
-        sessionQueue.async { [weak self] in
+        sessionQueue?.async { [weak self] in
             guard let strongSelf = self else {
                 return
             }
@@ -51,7 +51,7 @@ class YPVideoCaptureHelper: NSObject {
 
     public func startCamera(completion: @escaping (() -> Void)) {
         if !session.isRunning {
-            sessionQueue.async { [weak self] in
+            sessionQueue?.async { [weak self] in
                 // Re-apply session preset
                 self?.session.sessionPreset = .high
                 let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
@@ -70,7 +70,7 @@ class YPVideoCaptureHelper: NSObject {
     // MARK: - Flip Camera
 
     public func flipCamera(completion: @escaping () -> Void) {
-        sessionQueue.async { [weak self] in
+        sessionQueue?.async { [weak self] in
             guard let strongSelf = self else {
                 return
             }
@@ -112,11 +112,14 @@ class YPVideoCaptureHelper: NSObject {
 
     // MARK: - Stop Camera
 
-    public func stopCamera() {
+    public func stopCamera(completion: (() -> Void)? = nil) {
         if session.isRunning {
-            sessionQueue.async { [weak self] in
+            sessionQueue?.async { [weak self] in
                 self?.session.stopRunning()
+                completion?()
             }
+        } else {
+            completion?()
         }
     }
 
