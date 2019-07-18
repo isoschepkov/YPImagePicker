@@ -207,6 +207,9 @@ public struct YPConfigLibrary {
 
     /// Closure which is going to be executed on stop of resumable queue.
     public var onStopResumableQueue: (() -> Void)?
+
+    /// Default name for all photos album shown when user has not yet selected a specific album
+    public var allPhotosDefaultAlbumName: String?
 }
 
 /// Encapsulates video specific settings.

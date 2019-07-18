@@ -26,6 +26,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     internal let panGestureHelper = PanGestureHelper()
     internal var emptyView: UIView?
     internal var resumableQueue = YPResumableQueue()
+    internal var didSetInitialAlbumTitle = false
 
     // MARK: - Init
 
@@ -98,6 +99,14 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             v.sv(emptyView)
             emptyView.fillContainer()
             emptyView.isHidden = true
+        }
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if !didSetInitialAlbumTitle {
+            didSetInitialAlbumTitle = true
+            title = YPConfig.library.allPhotosDefaultAlbumName
         }
     }
 
