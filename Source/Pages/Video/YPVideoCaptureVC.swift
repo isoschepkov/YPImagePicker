@@ -80,20 +80,32 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
         // Init view state with video helper's state
         updateState {
             $0.isRecording = self.videoHelper.isRecording
+            $0.flashMode = self.flashModeFrom(videoHelper: self.videoHelper, usePreferredTorchMode: true)
         }
     }
 
     // MARK: - Setup
 
     private func setupButtons() {
-        v.flashButton.isHidden = true
+        v.flashButton.setImage(YPConfig.icons.flashOffIcon, for: .normal)
         v.flipButton.setImage(YPConfig.icons.loopIcon, for: .normal)
         v.shotButton.setImage(YPConfig.icons.captureVideoImage, for: .normal)
     }
 
     private func linkButtons() {
+        v.flashButton.addTarget(self, action: #selector(flashButtonTapped), for: .touchUpInside)
         v.shotButton.addTarget(self, action: #selector(shotButtonTapped), for: .touchUpInside)
         v.flipButton.addTarget(self, action: #selector(flipButtonTapped), for: .touchUpInside)
+    }
+
+    // MARK: - Toggle Flash
+
+    @objc
+    func flashButtonTapped() {
+        videoHelper.toggleTorch()
+        updateState {
+            $0.flashMode = self.flashModeFrom(videoHelper: self.videoHelper)
+        }
     }
 
     // MARK: - Flip Camera
@@ -162,8 +174,15 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
 
     // MARK: - UI State
 
+    enum FlashMode {
+        case noFlash
+        case off
+        case on
+    }
+
     struct ViewState {
         var isRecording = false
+        var flashMode = FlashMode.noFlash
         var progress: Float = 0
         var timeElapsed: TimeInterval = 0
     }
@@ -174,6 +193,16 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
     }
 
     private func updateUIWith(state: ViewState) {
+        func flashImage(for torchMode: FlashMode) -> UIImage {
+            switch torchMode {
+                case .noFlash: return UIImage()
+                case .on: return YPConfig.icons.flashOnIcon
+                case .off: return YPConfig.icons.flashOffIcon
+            }
+        }
+        v.flashButton.setImage(flashImage(for: state.flashMode), for: .normal)
+        v.flashButton.isEnabled = !state.isRecording
+        v.flashButton.isHidden = state.flashMode == .noFlash
         v.shotButton.setImage(state.isRecording ? YPConfig.icons.captureVideoOnImage : YPConfig.icons.captureVideoImage,
                               for: .normal)
         v.flipButton.isEnabled = !state.isRecording
@@ -187,8 +216,21 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
     private func resetVisualState() {
         updateState {
             $0.isRecording = self.videoHelper.isRecording
+            $0.flashMode = self.flashModeFrom(videoHelper: self.videoHelper)
             $0.progress = 0
             $0.timeElapsed = 0
+        }
+    }
+
+    private func flashModeFrom(videoHelper: YPVideoCaptureHelper, usePreferredTorchMode: Bool = false) -> FlashMode {
+        if videoHelper.hasTorch() {
+            switch videoHelper.currentTorchMode(usePreferredTorchMode: usePreferredTorchMode) {
+                case .off: return .off
+                case .on: return .on
+                case .auto: return .noFlash
+            }
+        } else {
+            return .noFlash
         }
     }
 }

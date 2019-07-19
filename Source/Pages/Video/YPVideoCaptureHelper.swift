@@ -28,6 +28,8 @@ class YPVideoCaptureHelper: NSObject {
     private var isPreviewSetup = false
     private var previewView: UIView!
     private var motionManager = CMMotionManager()
+    private var preferredTorchMode: AVCaptureDevice.TorchMode?
+    private let allowedTorchModes: Set<AVCaptureDevice.TorchMode> = [.on, .off]
 
     // MARK: - Init
 
@@ -129,12 +131,23 @@ class YPVideoCaptureHelper: NSObject {
         return videoInput?.device.hasTorch ?? false
     }
 
-    public func currentTorchMode() -> AVCaptureDevice.TorchMode {
+    public func currentTorchMode(usePreferredTorchMode: Bool) -> AVCaptureDevice.TorchMode {
         guard let device = videoInput?.device else {
             return .off
         }
         if !device.hasTorch {
             return .off
+        }
+        if usePreferredTorchMode,
+            let preferredTorchModeUnwrapped = preferredTorchMode,
+            allowedTorchModes.contains(preferredTorchModeUnwrapped) {
+            videoInput?.device.trySetTorchMode(preferredTorchModeUnwrapped)
+        }
+        if device.torchMode == .auto {
+            videoInput?.device.trySetTorchMode(.off)
+        }
+        if allowedTorchModes.contains(device.torchMode) {
+            preferredTorchMode = device.torchMode
         }
         return device.torchMode
     }
