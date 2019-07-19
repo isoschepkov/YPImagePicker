@@ -336,11 +336,12 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 }
 
 extension YPPickerVC: YPLibraryViewDelegate {
-    public func libraryViewStartedLoading() {
+    public func libraryViewStartedLoading(withSpinner: Bool) {
         libraryVC?.isProcessing = true
         DispatchQueue.main.async {
             self.v.scrollView.isScrollEnabled = false
             self.libraryVC?.v.fadeInLoader()
+            self.libraryVC?.v.assetViewContainer.spinnerView.isHidden = !withSpinner
             self.navigationItem.rightBarButtonItem = YPLoaders.defaultLoader
         }
     }

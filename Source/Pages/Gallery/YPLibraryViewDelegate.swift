@@ -10,7 +10,7 @@ import Foundation
 
 @objc
 public protocol YPLibraryViewDelegate: class {
-    func libraryViewStartedLoading()
+    func libraryViewStartedLoading(withSpinner: Bool)
     func libraryViewFinishedLoading()
     func libraryViewDidToggleMultipleSelection(enabled: Bool)
     func noPhotosForOptions()
