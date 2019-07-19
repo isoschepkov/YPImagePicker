@@ -73,7 +73,7 @@ final class YPLibraryView: UIView {
         )
 
         progressView.steviaHeight(5)
-        progressView.Top == line.Top
+        progressView.Top == line.Top - 6
         progressView.Width == line.Width
         progressView.progressViewStyle = .bar
         progressView.trackTintColor = YPConfig.colors.progressBarTrackColor
