@@ -220,6 +220,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         titleView.frame = CGRect(x: 0, y: 0, width: 200, height: 40)
 
         let label = UILabel()
+        label.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 749), for: .horizontal)
         label.text = aTitle
         // Use standard font by default.
         label.font = UIFont.boldSystemFont(ofSize: 17)
