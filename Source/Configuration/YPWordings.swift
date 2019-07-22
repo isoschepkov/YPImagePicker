@@ -20,9 +20,10 @@ public struct YPWordings {
     }
 
     public struct VideoDurationPopup {
-        public var title = "Video duration" // YPImagePickerVideoDurationTitle
         public var tooShortMessage = "The video must be at least %@ seconds" // YPImagePickerVideoTooShort
         public var tooLongMessage = "Pick a video less than %@ seconds long" // YPImagePickerVideoTooLong
+        public var tooShortTitle = "Video duration"
+        public var tooLongTitle = "Video duration"
     }
 
     public var ok = "Ok" // YPImagePickerOk

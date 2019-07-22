@@ -60,25 +60,7 @@ extension YPLibraryVC {
             selection.remove(at: positionIndex)
 
             refreshSelection(indexPath: indexPath)
-
-//            // Refresh the numbers
-//            var selectedIndexPaths = [IndexPath]()
-//            mediaManager.fetchResult.enumerateObjects { [unowned self] asset, index, _ in
-//                if self.selection.contains(where: { $0.assetIdentifier == asset.localIdentifier }) {
-//                    selectedIndexPaths.append(IndexPath(row: index, section: 0))
-//                }
-//            }
-//            v.collectionView.reloadItems(at: selectedIndexPaths)
-//
-//            // Replace the current selected image with the previously selected one
-//            if let previouslySelectedIndexPath = selectedIndexPaths.last {
-//                v.collectionView.deselectItem(at: indexPath, animated: false)
-//                v.collectionView.selectItem(at: previouslySelectedIndexPath, animated: false, scrollPosition: [])
-//                currentlySelectedIndex = previouslySelectedIndexPath.row
-//                changeAsset(mediaManager.fetchResult[previouslySelectedIndexPath.row])
-//            }
-//
-//            checkLimit()
+            delegate?.didDeselectItem()
         }
     }
 
@@ -160,7 +142,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
         cell.durationLabel.text = isVideo ? YPHelper.formattedStrigFrom(asset.duration) : ""
         cell.multipleSelectionIndicator.isHidden = !multipleSelectionEnabled
         cell.singleSelectionIndicator.isHidden = multipleSelectionEnabled
-        cell.isSelected = currentlySelectedIndex == indexPath.row
+//        cell.isSelected = currentlySelectedIndex == indexPath.row
+        cell.isSelected = selection.first(where: { $0.assetIdentifier == asset.localIdentifier }) != nil
 
         cell.imageView.steviaTopConstraint?.isActive = false
         cell.imageView.steviaBottomConstraint?.isActive = false

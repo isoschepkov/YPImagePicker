@@ -18,7 +18,12 @@ class YPBackButton: UIView {
         isUserInteractionEnabled = true
 
         addSubview(arrowImageView)
-        arrowImageView.frame = CGRect(x: 0, y: (frame.height - 16) / 2, width: 12, height: 20)
+        arrowImageView.frame = CGRect(
+            x: 0,
+            y: (frame.height - 16) / 2,
+            width: YPConfig.backButtonSize?.width ?? 12,
+            height: YPConfig.backButtonSize?.height ?? 20
+        )
         arrowImageView.tintColor = YPImagePickerConfiguration.shared.colors.tintColor
         let tintedImage = YPImagePickerConfiguration.shared.icons.backButtonIcon.withRenderingMode(.alwaysTemplate)
         arrowImageView.image = tintedImage

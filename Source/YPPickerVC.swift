@@ -363,6 +363,10 @@ extension YPPickerVC: YPLibraryViewDelegate {
         updateUI()
         self.imagePickerDelegate?.noPhotos()
     }
+
+    public func didDeselectItem() {
+        updateUI()
+    }
 }
 
 extension YPPickerVC: YPVideoCaptureDelegate {

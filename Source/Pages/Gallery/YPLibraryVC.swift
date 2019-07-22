@@ -43,9 +43,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         title = album.title
         mediaManager.collection = album.collection
         currentlySelectedIndex = 0
-        if !multipleSelectionEnabled {
-            selection.removeAll()
-        }
         refreshMediaRequest()
     }
 
@@ -272,7 +269,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             v.collectionView.selectItem(at: IndexPath(row: 0, section: 0),
                                         animated: false,
                                         scrollPosition: UICollectionView.ScrollPosition())
-            if !multipleSelectionEnabled {
+            if !multipleSelectionEnabled, selection.isEmpty {
                 addToSelection(indexPath: IndexPath(row: 0, section: 0))
             }
         } else {
@@ -427,6 +424,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                               videoCallback: @escaping (_ videoURL: YPMediaVideo) -> Void,
                               multipleItemsCallback: @escaping (_ items: [YPMediaItem]) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
+            if self.selection.isEmpty {
+                return
+            }
             let selectedAssets: [(asset: PHAsset, cropRect: CGRect?)] = self.selection.map {
                 guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier], options: PHFetchOptions()).firstObject else { fatalError() }
                 return (asset, $0.cropRect)

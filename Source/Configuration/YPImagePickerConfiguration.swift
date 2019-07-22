@@ -96,6 +96,9 @@ public struct YPImagePickerConfiguration {
     /// Defines the font to be used for the text in the bottom bar
     public var bottomMenuFont = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.medium)
 
+    /// Defines frame size for back button
+    public var backButtonSize: CGSize?
+
     /// List of default filters which will be added on the filter screen
     public var filters: [YPFilter] = [
         YPFilter(name: "Normal", applier: nil),
