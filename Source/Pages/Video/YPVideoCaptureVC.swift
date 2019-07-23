@@ -118,7 +118,9 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
     }
 
     private func flip() {
-        videoHelper.flipCamera {}
+        videoHelper.flipCamera { [weak self] in
+            self?.refreshState()
+        }
     }
 
     // MARK: - Toggle Recording
