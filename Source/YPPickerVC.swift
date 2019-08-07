@@ -24,6 +24,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     var initialStatusBarHidden = false
     weak var imagePickerDelegate: ImagePickerDelegate?
     private let sessionQueue = DispatchQueue(label: "YPVideoVCSerialQueue", qos: .background)
+    private var isLoading = false
 
     open override var prefersStatusBarHidden: Bool {
         return (shouldHideStatusBar || initialStatusBarHidden) && YPConfig.hidesStatusBar
@@ -314,6 +315,10 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     func done() {
         guard let libraryVC = libraryVC else { print("⚠️ YPPickerVC >>> YPLibraryVC deallocated"); return }
 
+        guard !isLoading else {
+            return
+        }
+
         if mode == .library {
             libraryVC.doAfterPermissionCheck { [weak self] in
                 libraryVC.selectedMedia(photoCallback: { photo in
@@ -342,13 +347,14 @@ extension YPPickerVC: YPLibraryViewDelegate {
             self.v.scrollView.isScrollEnabled = false
             self.libraryVC?.v.fadeInLoader()
             self.libraryVC?.v.assetViewContainer.spinnerView.isHidden = !withSpinner
-            self.navigationItem.rightBarButtonItem = YPLoaders.defaultLoader
+            self.isLoading = true
         }
     }
 
     public func libraryViewFinishedLoading() {
         libraryVC?.isProcessing = false
         DispatchQueue.main.async {
+            self.isLoading = false
             self.v.scrollView.isScrollEnabled = YPConfig.isScrollToChangeModesEnabled
             self.libraryVC?.v.hideLoader()
             self.updateUI()
