@@ -47,6 +47,9 @@ public struct YPColors {
     /// Title color for the library in the navigation bar
     public var libraryTitleNavigationBarColor: UIColor?
 
+    /// Background color for asset view in library
+    public var libraryAssetViewBackground = UIColor.white
+
     // MARK: - Trimmer
 
     /// The color of the main border of the view

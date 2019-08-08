@@ -35,6 +35,8 @@ final class YPLibraryView: UIView {
             |line| ~~ 1
         )
 
+        assetViewContainer.backgroundColor = YPImagePickerConfiguration.shared.colors.libraryAssetViewBackground
+
         line.backgroundColor = YPImagePickerConfiguration.shared.colors.libraryBackground
 
         setupMaxNumberOfItemsView()
