@@ -30,6 +30,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     private let sessionQueue = DispatchQueue(label: "YPVideoVCSerialQueue", qos: .background)
     private var isLoading = false
     private var isProcessing = false
+    private var isLoadingDoneTimer: Timer?
     var isIgnoringInteraction = false
 
     open override var prefersStatusBarHidden: Bool {
@@ -363,6 +364,10 @@ extension YPPickerVC: YPLibraryViewDelegate {
             self.libraryVC?.v.fadeInLoader()
             self.libraryVC?.v.assetViewContainer.spinnerView.isHidden = !withSpinner
             self.isLoading = true
+            self.isLoadingDoneTimer?.invalidate()
+            self.isLoadingDoneTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { _ in
+                self.navigationItem.rightBarButtonItem?.isEnabled = false
+            }
         }
     }
 
@@ -370,6 +375,7 @@ extension YPPickerVC: YPLibraryViewDelegate {
         libraryVC?.isProcessing = false
         DispatchQueue.main.async {
             self.isLoading = false
+            self.isLoadingDoneTimer?.invalidate()
             self.v.scrollView.isScrollEnabled = YPConfig.isScrollToChangeModesEnabled
             self.libraryVC?.v.hideLoader()
             self.updateUI()
