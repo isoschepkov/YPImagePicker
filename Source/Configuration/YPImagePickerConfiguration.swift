@@ -120,6 +120,8 @@ public struct YPImagePickerConfiguration {
         YPFilter(name: "Sepia", coreImageFilterName: "CISepiaTone"),
     ]
 
+    public var triesToCloseWhileProcessing: ((@escaping () -> Void) -> Void)?
+
     /// Migration
 
     @available(iOS, obsoleted: 3.0.0, renamed: "video.compression")

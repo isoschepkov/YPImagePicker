@@ -436,7 +436,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             self.resumableQueue.onFailure = { [weak self] in
                 self?.mediaManager.clearExport()
                 self?.delegate?.libraryViewFinishedLoading()
+                self?.delegate?.didEndProcessing()
             }
+
+            self.delegate?.didStartProcessing()
 
             // Multiple selection
             if self.multipleSelectionEnabled && self.selection.count > 1 {
@@ -507,6 +510,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                         }
                         multipleItemsCallback(resultMediaItems)
                         self?.delegate?.libraryViewFinishedLoading()
+                        self?.delegate?.didEndProcessing()
                     }
                 }
             } else {
@@ -537,6 +541,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                             self.delegate?.libraryViewFinishedLoading()
                             let video = YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
                                                      videoURL: videoURL, asset: asset)
+                            self.delegate?.didEndProcessing()
                             videoCallback(video)
                         }
                     }
@@ -567,6 +572,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                             let photo = YPMediaPhoto(image: image.resizedImageIfNeeded(),
                                                      exifMeta: exifMeta,
                                                      asset: asset)
+                            self.delegate?.didEndProcessing()
                             photoCallback(photo)
                         }
                     }

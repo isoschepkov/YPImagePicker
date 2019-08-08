@@ -29,6 +29,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     weak var imagePickerDelegate: ImagePickerDelegate?
     private let sessionQueue = DispatchQueue(label: "YPVideoVCSerialQueue", qos: .background)
     private var isLoading = false
+    private var isProcessing = false
     var isIgnoringInteraction = false
 
     open override var prefersStatusBarHidden: Bool {
@@ -309,11 +310,19 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 
     @objc
     func close() {
-        // Cancelling exporting of all videos
-        if let libraryVC = libraryVC {
-            libraryVC.mediaManager.forseCancelExporting()
+        func handleClose() {
+            // Cancelling exporting of all videos
+            if let libraryVC = libraryVC {
+                libraryVC.mediaManager.forseCancelExporting()
+            }
+            didClose?()
         }
-        didClose?()
+
+        if isProcessing {
+            YPConfig.triesToCloseWhileProcessing?(handleClose)
+        } else {
+            handleClose()
+        }
     }
 
     // When pressing "Next"
@@ -378,6 +387,14 @@ extension YPPickerVC: YPLibraryViewDelegate {
 
     public func didDeselectItem() {
         updateUI()
+    }
+
+    public func didStartProcessing() {
+        isProcessing = true
+    }
+
+    public func didEndProcessing() {
+        isProcessing = false
     }
 }
 
