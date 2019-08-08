@@ -18,6 +18,10 @@ protocol YPVideoCaptureDelegate: AnyObject {
     func willStartVideoCapture(completion: (() -> Void)?)
 }
 
+protocol YPPhotoCaptureDelegate: AnyObject {
+    func willStartPhotoCapture()
+}
+
 open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     let albumsManager = YPAlbumsManager()
     var shouldHideStatusBar = false
@@ -25,6 +29,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     weak var imagePickerDelegate: ImagePickerDelegate?
     private let sessionQueue = DispatchQueue(label: "YPVideoVCSerialQueue", qos: .background)
     private var isLoading = false
+    var isIgnoringInteraction = false
 
     open override var prefersStatusBarHidden: Bool {
         return (shouldHideStatusBar || initialStatusBarHidden) && YPConfig.hidesStatusBar
@@ -70,6 +75,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         if YPConfig.screens.contains(.photo) {
             cameraVC = YPCameraVC()
             cameraVC?.photoCapture.sessionQueue = sessionQueue
+            cameraVC?.photoCaptureDelegate = self
             cameraVC?.videoCaptureDelegate = self
             cameraVC?.didCapturePhoto = { [weak self] img in
                 self?.didSelectItems?([YPMediaItem.photo(p: YPMediaPhoto(image: img,
@@ -372,6 +378,15 @@ extension YPPickerVC: YPLibraryViewDelegate {
 
     public func didDeselectItem() {
         updateUI()
+    }
+}
+
+extension YPPickerVC: YPPhotoCaptureDelegate {
+    func willStartPhotoCapture() {
+        DispatchQueue.main.async {
+            self.isIgnoringInteraction = true
+            UIApplication.shared.beginIgnoringInteractionEvents()
+        }
     }
 }
 

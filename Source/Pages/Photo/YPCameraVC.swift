@@ -12,6 +12,7 @@ import UIKit
 
 public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermissionCheckable {
     weak var videoCaptureDelegate: YPVideoCaptureDelegate?
+    weak var photoCaptureDelegate: YPPhotoCaptureDelegate?
     public var didCapturePhoto: ((UIImage) -> Void)?
     var photoCapture = newPhotoCapture()
     let v: YPCameraView!
@@ -101,6 +102,8 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
         // Prevent from tapping multiple times in a row
         // causing a crash
         v.shotButton.isEnabled = false
+
+        photoCaptureDelegate?.willStartPhotoCapture()
 
         photoCapture.shoot { imageData in
 

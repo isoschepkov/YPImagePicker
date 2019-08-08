@@ -30,6 +30,12 @@ open class YPImagePicker: UINavigationController {
     // This keeps the backwards compatibility keeps the api as simple as possible.
     // Multiple selection becomes available as an opt-in.
     private func didSelect(items: [YPMediaItem]) {
+        DispatchQueue.main.async {
+            if self.picker.isIgnoringInteraction {
+                UIApplication.shared.endIgnoringInteractionEvents()
+                self.picker.isIgnoringInteraction = false
+            }
+        }
         _didFinishPicking?(items, false)
     }
 
