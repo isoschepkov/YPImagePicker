@@ -12,6 +12,10 @@ import Photos
 class YPAlbumsManager {
     private var cachedAlbums: [YPAlbum]?
 
+    func resetCache() {
+        cachedAlbums = nil
+    }
+
     func fetchAlbums() -> [YPAlbum] {
         if let cachedAlbums = cachedAlbums {
             return cachedAlbums
