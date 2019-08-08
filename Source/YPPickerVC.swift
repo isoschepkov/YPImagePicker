@@ -206,7 +206,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     @objc
     func navBarTapped() {
         let vc = YPAlbumVC(albumsManager: albumsManager)
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = YPAlbumsNavigationController(rootViewController: vc)
 
         vc.didSelectAlbum = { [weak self] album in
             self?.libraryVC?.setAlbum(album)

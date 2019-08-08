@@ -79,7 +79,7 @@ extension YPAlbumVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let album = albums[indexPath.row]
         if let cell = tableView.dequeueReusableCell(withIdentifier: "AlbumCell", for: indexPath) as? YPAlbumCell {
-            cell.thumbnail.backgroundColor = .gray
+            cell.thumbnail.backgroundColor = YPConfig.colors.albumThumbnailColor
             cell.thumbnail.image = album.thumbnail
             cell.title.text = album.title
             cell.numberOfItems.text = "\(album.numberOfItems)"
@@ -92,5 +92,9 @@ extension YPAlbumVC: UITableViewDataSource {
 extension YPAlbumVC: UITableViewDelegate {
     public func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         didSelectAlbum?(albums[indexPath.row])
+    }
+
+    public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        return false
     }
 }

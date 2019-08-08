@@ -42,5 +42,9 @@ class YPAlbumCell: UITableViewCell {
 
         title.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
         numberOfItems.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
+        title.textColor = YPConfig.colors.albumsTextColor
+        numberOfItems.textColor = YPConfig.colors.albumsTextColor
+
+        backgroundColor = YPConfig.colors.albumsViewBackground
     }
 }

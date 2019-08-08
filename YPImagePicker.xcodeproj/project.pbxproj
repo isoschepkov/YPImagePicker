@@ -66,6 +66,7 @@
 		99CF6D2B201CB96700487F77 /* YPVideoCaptureHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CF6D2A201CB96700487F77 /* YPVideoCaptureHelper.swift */; };
 		99D1DC2B1F9788930047F0E0 /* YPImagePickerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D1DC2A1F9788930047F0E0 /* YPImagePickerConfiguration.swift */; };
 		D152543122FC2BBA00E758F2 /* YPAlbumVC+LibraryChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152543022FC2BB900E758F2 /* YPAlbumVC+LibraryChange.swift */; };
+		D152543522FC313400E758F2 /* YPAlbumsNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152543422FC313400E758F2 /* YPAlbumsNavigationController.swift */; };
 		D161BD7B22A15EF900956DF7 /* YPMultipleSelectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D161BD7A22A15EF900956DF7 /* YPMultipleSelectionButton.swift */; };
 		D161BD7D22A15F3C00956DF7 /* YPLineContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D161BD7C22A15F3B00956DF7 /* YPLineContainerView.swift */; };
 		D161BD8022A15FD600956DF7 /* YPBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D161BD7F22A15FD600956DF7 /* YPBackButton.swift */; };
@@ -172,6 +173,7 @@
 		99D1DC2A1F9788930047F0E0 /* YPImagePickerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPImagePickerConfiguration.swift; sourceTree = "<group>"; };
 		A7FD716620755C2D0044A8E8 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		D152543022FC2BB900E758F2 /* YPAlbumVC+LibraryChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "YPAlbumVC+LibraryChange.swift"; sourceTree = "<group>"; };
+		D152543422FC313400E758F2 /* YPAlbumsNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPAlbumsNavigationController.swift; sourceTree = "<group>"; };
 		D161BD7A22A15EF900956DF7 /* YPMultipleSelectionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPMultipleSelectionButton.swift; sourceTree = "<group>"; };
 		D161BD7C22A15F3B00956DF7 /* YPLineContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPLineContainerView.swift; sourceTree = "<group>"; };
 		D161BD7F22A15FD600956DF7 /* YPBackButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPBackButton.swift; sourceTree = "<group>"; };
@@ -284,6 +286,7 @@
 				99A052A01F20B49B005600B3 /* YPAlbum.swift */,
 				99A0529E1F20B480005600B3 /* YPAlbumCell.swift */,
 				99A052A21F20B4CA005600B3 /* YPAlbumsManager.swift */,
+				D152543422FC313400E758F2 /* YPAlbumsNavigationController.swift */,
 				99A052991F20A19B005600B3 /* YPAlbumVC.swift */,
 				D152543022FC2BB900E758F2 /* YPAlbumVC+LibraryChange.swift */,
 				99A0529C1F20B45D005600B3 /* YPAlbumView.swift */,
@@ -637,6 +640,7 @@
 				99019E562018D008007325C2 /* YPMenuItem.swift in Sources */,
 				9915D9D32087E692003FC307 /* YPLibrarySelection.swift in Sources */,
 				EB1AB2EA20AC1DED00BFA79F /* CGFloat+Extensions.swift in Sources */,
+				D152543522FC313400E758F2 /* YPAlbumsNavigationController.swift in Sources */,
 				99C6D6C21F1FB5C100711DB2 /* YPCameraVC.swift in Sources */,
 				990FD299201B67FE002A39A1 /* PHFetchResult+Extensions.swift in Sources */,
 				EB473E1B208E1B7400D16105 /* NSFileManager+Extensions.swift in Sources */,

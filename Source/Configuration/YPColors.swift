@@ -50,6 +50,15 @@ public struct YPColors {
     /// Background color for asset view in library
     public var libraryAssetViewBackground = UIColor.white
 
+    /// Background color for albums view
+    public var albumsViewBackground = UIColor.white
+
+    /// Color for labels in albums view
+    public var albumsTextColor = UIColor.black
+
+    /// Background color for album thumbnail
+    public var albumThumbnailColor = UIColor.gray
+
     // MARK: - Trimmer
 
     /// The color of the main border of the view
