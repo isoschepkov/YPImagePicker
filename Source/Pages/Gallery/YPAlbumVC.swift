@@ -93,8 +93,4 @@ extension YPAlbumVC: UITableViewDelegate {
     public func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         didSelectAlbum?(albums[indexPath.row])
     }
-
-    public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return false
-    }
 }

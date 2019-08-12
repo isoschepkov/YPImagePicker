@@ -19,6 +19,8 @@ class YPAlbumCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+        selectionStyle = .none
+
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.addArrangedSubview(title)

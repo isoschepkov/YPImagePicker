@@ -260,7 +260,6 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 
             let button = UIButton()
             button.addTarget(self, action: #selector(navBarTapped), for: .touchUpInside)
-            button.setBackgroundColor(UIColor.white.withAlphaComponent(0.5), forState: .highlighted)
 
             titleView.sv(
                 label,
