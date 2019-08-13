@@ -101,13 +101,19 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
     func shoot() {
         // Prevent from tapping multiple times in a row
         // causing a crash
+        if !photoCapture.session.isRunning {
+            return
+        }
+
         v.shotButton.isEnabled = false
 
         photoCaptureDelegate?.willStartPhotoCapture()
 
         photoCapture.shoot { imageData in
-
-            guard let shotImage = UIImage(data: imageData) else {
+            guard let unwrappedImageData = imageData,
+                let shotImage = UIImage(data: unwrappedImageData) else {
+                self.v.shotButton.isEnabled = true
+                self.photoCaptureDelegate?.didCancelPhotoCapture()
                 return
             }
 

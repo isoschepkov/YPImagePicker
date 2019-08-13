@@ -26,7 +26,7 @@ class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDele
         guard let device = device else { return false }
         return device.hasFlash
     }
-    var block: ((Data) -> Void)?
+    var block: ((Data?) -> Void)?
 
     // MARK: - Configuration
 
@@ -80,7 +80,7 @@ class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDele
 
     // MARK: - Shoot
 
-    func shoot(completion: @escaping (Data) -> Void) {
+    func shoot(completion: @escaping (Data?) -> Void) {
         block = completion
 
         // Set current device orientation
@@ -90,23 +90,11 @@ class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDele
         photoOutput.capturePhoto(with: settings, delegate: self)
     }
 
-    @available(iOS 11.0, *)
     func photoOutput(_: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error _: Error?) {
-        guard let data = photo.fileDataRepresentation() else { return }
-        block?(data)
-    }
-
-    func photoOutput(_: AVCapturePhotoOutput,
-                     didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?,
-                     previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?,
-                     resolvedSettings _: AVCaptureResolvedPhotoSettings,
-                     bracketSettings _: AVCaptureBracketedStillImageSettings?,
-                     error _: Error?) {
-        guard let buffer = photoSampleBuffer else { return }
-        if let data = AVCapturePhotoOutput
-            .jpegPhotoDataRepresentation(forJPEGSampleBuffer: buffer,
-                                         previewPhotoSampleBuffer: previewPhotoSampleBuffer) {
-            block?(data)
+        guard let data = photo.fileDataRepresentation() else {
+            block?(nil)
+            return
         }
+        block?(data)
     }
 }

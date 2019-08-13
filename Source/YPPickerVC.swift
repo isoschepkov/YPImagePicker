@@ -20,6 +20,7 @@ protocol YPVideoCaptureDelegate: AnyObject {
 
 protocol YPPhotoCaptureDelegate: AnyObject {
     func willStartPhotoCapture()
+    func didCancelPhotoCapture()
 }
 
 open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
@@ -408,6 +409,15 @@ extension YPPickerVC: YPPhotoCaptureDelegate {
         DispatchQueue.main.async {
             self.isIgnoringInteraction = true
             UIApplication.shared.beginIgnoringInteractionEvents()
+        }
+    }
+
+    func didCancelPhotoCapture() {
+        DispatchQueue.main.async {
+            if self.isIgnoringInteraction {
+                self.isIgnoringInteraction = false
+                UIApplication.shared.endIgnoringInteractionEvents()
+            }
         }
     }
 }

@@ -140,7 +140,6 @@ class YPVideoProcessor {
                 try compositionTrack?.insertTimeRange(timeRange, of: track, at: .zero)
             }
         } catch {
-            log.error("Error during video asset composition")
             return nil
         }
 
