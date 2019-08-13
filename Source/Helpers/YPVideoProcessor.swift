@@ -66,6 +66,15 @@ class YPVideoProcessor {
             return
         }
 
+        // trim to max recording size
+        var asset = asset
+        let trimEnd: CMTime = asset.duration.seconds > YPConfig.video.recordingTimeLimit
+            ? CMTime(seconds: YPConfig.video.recordingTimeLimit, preferredTimescale: 30)
+            : asset.duration
+        if let trimmedAsset = trim(asset: asset, start: CMTime.zero, end: trimEnd) {
+            asset = trimmedAsset
+        }
+
         // input clip
         let clipVideoTrack = asset.tracks(withMediaType: .video)[0]
 
@@ -74,7 +83,7 @@ class YPVideoProcessor {
         videoComposition.renderSize = CGSize(width: CGFloat(clipVideoTrack.naturalSize.height), height: CGFloat(clipVideoTrack.naturalSize.height))
         videoComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
         let instruction = AVMutableVideoCompositionInstruction()
-        instruction.timeRange = CMTimeRangeMake(start: CMTime.zero, duration: CMTimeMakeWithSeconds(YPConfig.video.recordingTimeLimit + 1, preferredTimescale: 30))
+        instruction.timeRange = CMTimeRangeMake(start: CMTime.zero, duration: asset.duration)
 
         // rotate to potrait
         let transformer = AVMutableVideoCompositionLayerInstruction(assetTrack: clipVideoTrack)
@@ -118,5 +127,23 @@ class YPVideoProcessor {
             completion(nil)
             return
         }
+    }
+
+    static func trim(asset: AVAsset, start: CMTime, end: CMTime) -> AVAsset? {
+        let composition = AVMutableComposition()
+        let duration = CMTimeSubtract(end, start)
+        let timeRange = CMTimeRangeMake(start: start, duration: duration)
+
+        do {
+            for track in asset.tracks {
+                let compositionTrack = composition.addMutableTrack(withMediaType: track.mediaType, preferredTrackID: track.trackID)
+                try compositionTrack?.insertTimeRange(timeRange, of: track, at: .zero)
+            }
+        } catch {
+            log.error("Error during video asset composition")
+            return nil
+        }
+
+        return composition
     }
 }
