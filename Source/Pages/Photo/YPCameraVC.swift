@@ -85,8 +85,10 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
     @objc
     func flipButtonTapped() {
         doAfterPermissionCheck { [weak self] in
-            self?.photoCapture.flipCamera {
+            self?.v.shotButton.isEnabled = false
+            self?.photoCapture.flipCamera { [weak self] in
                 self?.refreshFlashButton()
+                self?.v.shotButton.isEnabled = true
             }
         }
     }
@@ -101,7 +103,7 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
     func shoot() {
         // Prevent from tapping multiple times in a row
         // causing a crash
-        if !photoCapture.session.isRunning {
+        if !(photoCapture.hasInputs && photoCapture.session.isRunning) {
             return
         }
 

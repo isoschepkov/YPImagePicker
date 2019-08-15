@@ -24,6 +24,7 @@ protocol YPPhotoCapture: class {
     var device: AVCaptureDevice? { get }
 
     // Used by Default extension
+    var hasInputs: Bool { get }
     var previewView: UIView! { get set }
     var isCaptureSessionSetup: Bool { get set }
     var isPreviewSetup: Bool { get set }

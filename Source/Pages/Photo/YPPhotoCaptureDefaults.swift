@@ -10,6 +10,10 @@ import AVFoundation
 import UIKit
 
 extension YPPhotoCapture {
+    var hasInputs: Bool {
+        return !session.inputs.isEmpty
+    }
+
     // MARK: - Setup
 
     private func setupCaptureSession() {
