@@ -17,4 +17,5 @@ public protocol YPLibraryViewDelegate: class {
     func didDeselectItem()
     func didStartProcessing()
     func didEndProcessing()
+    func libraryDidChange()
 }

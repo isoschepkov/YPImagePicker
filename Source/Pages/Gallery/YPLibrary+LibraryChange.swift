@@ -14,8 +14,13 @@ extension YPLibraryVC: PHPhotoLibraryChangeObserver {
         PHPhotoLibrary.shared().register(self)
     }
 
+    func unregisterForLibraryChanges() {
+        PHPhotoLibrary.shared().unregisterChangeObserver(self)
+    }
+
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
         DispatchQueue.main.async {
+            self.delegate?.libraryDidChange()
             let fetchResult = self.mediaManager.fetchResult!
             let collectionChanges = changeInstance.changeDetails(for: fetchResult)
             if collectionChanges != nil {

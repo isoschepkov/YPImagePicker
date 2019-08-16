@@ -48,6 +48,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         case video
     }
 
+    private var albumVC: YPAlbumVC?
     private var libraryVC: YPLibraryVC?
     private var cameraVC: YPCameraVC?
     private var videoVC: YPVideoCaptureVC?
@@ -215,6 +216,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     @objc
     func navBarTapped() {
         let vc = YPAlbumVC(albumsManager: albumsManager)
+        albumVC = vc
         let navVC = YPAlbumsNavigationController(rootViewController: vc)
 
         vc.didSelectAlbum = { [weak self] album in
@@ -401,6 +403,11 @@ extension YPPickerVC: YPLibraryViewDelegate {
 
     public func didEndProcessing() {
         isProcessing = false
+    }
+
+    public func libraryDidChange() {
+        albumsManager.resetCache()
+        albumVC?.fetchAlbumsInBackground()
     }
 }
 

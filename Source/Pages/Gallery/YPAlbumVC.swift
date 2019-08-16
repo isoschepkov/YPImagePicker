@@ -39,7 +39,6 @@ class YPAlbumVC: UIViewController {
                                                            target: self,
                                                            action: #selector(close))
         setUpTableView()
-        registerForLibraryChanges()
         fetchAlbumsInBackground()
     }
 

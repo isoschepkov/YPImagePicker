@@ -137,7 +137,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
 
         pausePlayer()
         NotificationCenter.default.removeObserver(self)
-        PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
 
     // MARK: - Crop control
@@ -605,6 +604,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     // MARK: - Deinit
 
     deinit {
-        PHPhotoLibrary.shared().unregisterChangeObserver(self)
+        unregisterForLibraryChanges()
     }
 }
