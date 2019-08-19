@@ -140,9 +140,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
         let isVideo = (asset.mediaType == .video)
         cell.durationLabel.isHidden = !isVideo
         cell.durationLabel.text = isVideo ? YPHelper.formattedStrigFrom(asset.duration) : ""
-        cell.multipleSelectionIndicator.isHidden = !multipleSelectionEnabled
         cell.singleSelectionIndicator.isHidden = multipleSelectionEnabled
-//        cell.isSelected = currentlySelectedIndex == indexPath.row
         cell.isSelected = selection.first(where: { $0.assetIdentifier == asset.localIdentifier }) != nil
 
         cell.imageView.steviaTopConstraint?.isActive = false
@@ -151,9 +149,11 @@ extension YPLibraryVC: UICollectionViewDelegate {
         cell.imageView.steviaRightConstraint?.isActive = false
         // Set correct selection number
         if let index = selection.firstIndex(where: { $0.assetIdentifier == asset.localIdentifier }) {
+            cell.multipleSelectionIndicator.isHidden = !multipleSelectionEnabled
             cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0
             cell.imageView.fillContainer(8)
         } else {
+            cell.multipleSelectionIndicator.isHidden = true
             cell.multipleSelectionIndicator.set(number: nil)
             cell.imageView.fillContainer()
         }
