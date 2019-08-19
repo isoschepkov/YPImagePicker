@@ -85,9 +85,11 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
     @objc
     func flipButtonTapped() {
         doAfterPermissionCheck { [weak self] in
+            self?.v.flipButton.isEnabled = false
             self?.v.shotButton.isEnabled = false
             self?.photoCapture.flipCamera { [weak self] in
                 self?.refreshFlashButton()
+                self?.v.flipButton.isEnabled = true
                 self?.v.shotButton.isEnabled = true
             }
         }
