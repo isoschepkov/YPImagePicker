@@ -118,7 +118,11 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
     }
 
     private func flip() {
+        v.shotButton.isEnabled = false
+        v.flipButton.isEnabled = false
         videoHelper.flipCamera { [weak self] in
+            self?.v.shotButton.isEnabled = true
+            self?.v.flipButton.isEnabled = true
             self?.refreshState()
         }
     }
