@@ -317,11 +317,13 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         DispatchQueue.global(qos: .userInitiated).async {
             switch asset.mediaType {
             case .image:
+                self.mediaManager.cancelPendingFetchRequests()
                 self.v.assetZoomableView.setImage(asset,
                                                   mediaManager: self.mediaManager,
                                                   storedCropPosition: self.fetchStoredCrop(),
                                                   completion: completion)
             case .video:
+                self.mediaManager.cancelPendingFetchRequests()
                 self.v.assetZoomableView.setVideo(asset,
                                                   mediaManager: self.mediaManager,
                                                   storedCropPosition: self.fetchStoredCrop(),

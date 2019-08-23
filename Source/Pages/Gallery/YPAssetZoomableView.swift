@@ -61,7 +61,7 @@ final class YPAssetZoomableView: UIScrollView {
                          mediaManager: LibraryMediaManager,
                          storedCropPosition: YPLibrarySelection?,
                          completion: @escaping () -> Void) {
-        mediaManager.imageManager?.fetchPreviewFor(video: video) { [weak self] preview in
+        mediaManager.imageManager?.fetchPreviewFor(video: video, mediaManager: mediaManager) { [weak self] preview in
             guard let strongSelf = self else { return }
             guard strongSelf.currentAsset != video else { completion(); return }
 
@@ -82,7 +82,7 @@ final class YPAssetZoomableView: UIScrollView {
                 strongSelf.applyStoredCropPosition(scp173)
             }
         }
-        mediaManager.imageManager?.fetchPlayerItem(for: video) { [weak self] playerItem in
+        mediaManager.imageManager?.fetchPlayerItem(for: video, mediaManager: mediaManager) { [weak self] playerItem in
             guard let strongSelf = self else { return }
             guard strongSelf.currentAsset != video else { completion(); return }
             strongSelf.currentAsset = video
@@ -99,7 +99,7 @@ final class YPAssetZoomableView: UIScrollView {
         guard currentAsset != photo else { DispatchQueue.main.async { completion() }; return }
         currentAsset = photo
 
-        mediaManager.imageManager?.fetch(photo: photo) { [weak self] image, _ in
+        mediaManager.imageManager?.fetch(photo: photo, mediaManager: mediaManager) { [weak self] image, _ in
             guard let strongSelf = self else { return }
 
             if strongSelf.photoImageView.isDescendant(of: strongSelf) == false {

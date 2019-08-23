@@ -50,42 +50,56 @@ extension PHCachingImageManager {
         return [:]
     }
 
-    func fetchPreviewFor(video asset: PHAsset, callback: @escaping (UIImage) -> Void) {
+    func fetchPreviewFor(
+        video asset: PHAsset,
+        mediaManager: LibraryMediaManager,
+        callback: @escaping (UIImage) -> Void
+    ) {
         let options = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
         options.isSynchronous = true
         let screenWidth = UIScreen.main.bounds.width
         let ts = CGSize(width: screenWidth, height: screenWidth)
-        requestImage(for: asset, targetSize: ts, contentMode: .aspectFill, options: options) { image, _ in
+        let requestId = requestImage(for: asset, targetSize: ts, contentMode: .aspectFill, options: options) { image, _ in
             if let image = image {
                 DispatchQueue.main.async {
                     callback(image)
                 }
             }
         }
+        mediaManager.addFetchRequestId(requestId)
     }
 
-    func fetchPlayerItem(for video: PHAsset, callback: @escaping (AVPlayerItem) -> Void) {
+    func fetchPlayerItem(
+        for video: PHAsset,
+        mediaManager: LibraryMediaManager,
+        callback: @escaping (AVPlayerItem) -> Void
+    ) {
         let videosOptions = PHVideoRequestOptions()
         videosOptions.deliveryMode = PHVideoRequestOptionsDeliveryMode.automatic
         videosOptions.isNetworkAccessAllowed = true
-        requestPlayerItem(forVideo: video, options: videosOptions, resultHandler: { playerItem, _ in
+        let requestId = requestPlayerItem(forVideo: video, options: videosOptions, resultHandler: { playerItem, _ in
             DispatchQueue.main.async {
                 if let playerItem = playerItem {
                     callback(playerItem)
                 }
             }
         })
+        mediaManager.addFetchRequestId(requestId)
     }
 
     /// This method return two images in the callback. First is with low resolution, second with high.
     /// So the callback fires twice. But with isSynchronous = true there is only one high resolution image.
     /// Bool = isFromCloud
-    func fetch(photo asset: PHAsset, callback: @escaping (UIImage, Bool) -> Void) {
+    func fetch(
+        photo asset: PHAsset,
+        mediaManager: LibraryMediaManager,
+        callback: @escaping (UIImage, Bool) -> Void
+    ) {
         let options = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
         options.isSynchronous = true
-        requestImage(for: asset,
+        let requestId = requestImage(for: asset,
                      targetSize: PHImageManagerMaximumSize,
                      contentMode: .aspectFill,
                      options: options) { result, info in
@@ -100,5 +114,6 @@ extension PHCachingImageManager {
                 callback(image, isFromCloud)
             }
         }
+        mediaManager.addFetchRequestId(requestId)
     }
 }

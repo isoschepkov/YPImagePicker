@@ -17,10 +17,21 @@ class LibraryMediaManager {
     internal var imageManager: PHCachingImageManager?
     internal var exportTimer: Timer?
     internal var currentExportSessions: [AVAssetExportSession] = []
+    private var pendingFetchRequests: [PHImageRequestID] = []
 
     func initialize() {
         imageManager = PHCachingImageManager()
         resetCachedAssets()
+    }
+
+    func cancelPendingFetchRequests() {
+        for requestId in pendingFetchRequests {
+            imageManager?.cancelImageRequest(requestId)
+        }
+    }
+
+    func addFetchRequestId(_ requestId: PHImageRequestID) {
+        pendingFetchRequests.append(requestId)
     }
 
     func resetCachedAssets() {
