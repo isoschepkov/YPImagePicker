@@ -195,12 +195,17 @@ extension YPLibraryVC: UICollectionViewDelegate {
             addToSelection(indexPath: indexPath)
             if let selectedRow = previouslySelectedIndices.first?.index {
                 let previouslySelectedIndexPath = IndexPath(row: selectedRow, section: 0)
-                collectionView.reloadItems(at: [previouslySelectedIndexPath])
+                collectionView.dataSource?.collectionView(collectionView, numberOfItemsInSection: 0)
+                if isSafeIndexPath(previouslySelectedIndexPath, collectionView: collectionView) {
+                    collectionView.reloadItems(at: [previouslySelectedIndexPath])
+                }
             }
         }
 
         collectionView.reloadItems(at: [indexPath])
-        collectionView.reloadItems(at: [previouslySelectedIndexPath])
+        if isSafeIndexPath(previouslySelectedIndexPath, collectionView: collectionView) {
+            collectionView.reloadItems(at: [previouslySelectedIndexPath])
+        }
     }
 
     public func collectionView(_: UICollectionView, shouldSelectItemAt _: IndexPath) -> Bool {
@@ -209,6 +214,10 @@ extension YPLibraryVC: UICollectionViewDelegate {
 
     public func collectionView(_: UICollectionView, shouldDeselectItemAt _: IndexPath) -> Bool {
         return isProcessing == false
+    }
+
+    private func isSafeIndexPath(_ indexPath: IndexPath, collectionView: UICollectionView) -> Bool {
+        return indexPath.row < collectionView.dataSource?.collectionView(collectionView, numberOfItemsInSection: 0) ?? 0
     }
 }
 
