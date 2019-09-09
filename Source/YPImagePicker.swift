@@ -49,6 +49,12 @@ open class YPImagePicker: UINavigationController {
 
     /// Get a YPImagePicker with the specified configuration.
     public required init(configuration: YPImagePickerConfiguration) {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            log.error("Failed work with AVAudioSession")
+        }
         YPImagePickerConfiguration.shared = configuration
         picker = YPPickerVC()
         super.init(nibName: nil, bundle: nil)
