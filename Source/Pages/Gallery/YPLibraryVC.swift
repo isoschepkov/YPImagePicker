@@ -303,14 +303,14 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
     }
 
-    func changeVideoAsset(_ asset: PHAsset) {
+    func changeVideoAsset(_ asset: PHAsset, storedCropPosition: YPLibrarySelection?) {
         DispatchQueue.global(qos: .userInitiated).async {
             switch asset.mediaType {
             case .video:
                 self.mediaManager.cancelPendingFetchRequests()
                 self.v.assetZoomableView.setVideo(asset,
                                                   mediaManager: self.mediaManager,
-                                                  storedCropPosition: self.fetchStoredCrop(),
+                                                  storedCropPosition: storedCropPosition,
                                                   completion: {})
             case .image, .audio, .unknown:
                 break
@@ -444,9 +444,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             if self.selection.isEmpty {
                 return
             }
-            let selectedAssets: [(asset: PHAsset, cropRect: CGRect?)] = self.selection.map {
+            let selectedAssets: [(asset: PHAsset, cropRect: CGRect?, selection: YPLibrarySelection)] = self.selection.map {
                 guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier], options: PHFetchOptions()).firstObject else { fatalError() }
-                return (asset, $0.cropRect)
+                return (asset, $0.cropRect, $0)
             }
 
             self.resumableQueue.stop()
@@ -497,7 +497,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                                     handler.failure()
                                     return
                                 }
-                                self.changeVideoAsset(asset.asset)
+                                self.changeVideoAsset(asset.asset, storedCropPosition: asset.selection)
                                 self.checkVideoLengthAndCrop(for: asset.asset, withCropRect: asset.cropRect) { videoURL in
                                     let videoItem = YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
                                                                  videoURL: videoURL, asset: asset.asset)
@@ -542,7 +542,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                                 handler.failure()
                                 return
                             }
-                            self.changeVideoAsset(asset)
+                            self.changeVideoAsset(asset, storedCropPosition: selectedAssets.first?.selection)
                             self.checkVideoLengthAndCrop(for: asset, callback: { videoURL in
                                 videoURLWrapped = videoURL
                                 handler.completion()
