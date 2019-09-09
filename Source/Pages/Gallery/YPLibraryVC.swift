@@ -303,6 +303,21 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
     }
 
+    func changeVideoAsset(_ asset: PHAsset) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            switch asset.mediaType {
+            case .video:
+                self.mediaManager.cancelPendingFetchRequests()
+                self.v.assetZoomableView.setVideo(asset,
+                                                  mediaManager: self.mediaManager,
+                                                  storedCropPosition: self.fetchStoredCrop(),
+                                                  completion: {})
+            case .image, .audio, .unknown:
+                break
+            }
+        }
+    }
+
     func changeAsset(_ asset: PHAsset) {
         latestImageTapped = asset.localIdentifier
         delegate?.libraryViewStartedLoading(withSpinner: true)
@@ -482,6 +497,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                                     handler.failure()
                                     return
                                 }
+                                self.changeVideoAsset(asset.asset)
                                 self.checkVideoLengthAndCrop(for: asset.asset, withCropRect: asset.cropRect) { videoURL in
                                     let videoItem = YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
                                                                  videoURL: videoURL, asset: asset.asset)
@@ -526,6 +542,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                                 handler.failure()
                                 return
                             }
+                            self.changeVideoAsset(asset)
                             self.checkVideoLengthAndCrop(for: asset, callback: { videoURL in
                                 videoURLWrapped = videoURL
                                 handler.completion()

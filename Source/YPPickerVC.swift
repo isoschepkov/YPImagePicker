@@ -33,6 +33,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     private var isProcessing = false
     private var isLoadingDoneTimer: Timer?
     var isIgnoringInteraction = false
+    private let blockingView = UIView()
 
     open override var prefersStatusBarHidden: Bool {
         return (shouldHideStatusBar || initialStatusBarHidden) && YPConfig.hidesStatusBar
@@ -139,6 +140,11 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
+
+        // Add blocking view
+        view.sv(blockingView)
+        blockingView.fillContainer()
+        blockingView.isHidden = true
     }
 
     open override func viewWillAppear(_ animated: Bool) {
@@ -215,6 +221,9 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 
     @objc
     func navBarTapped() {
+        guard !isProcessing else {
+            return
+        }
         let vc = YPAlbumVC(albumsManager: albumsManager)
         albumVC = vc
         let navVC = YPAlbumsNavigationController(rootViewController: vc)
@@ -399,10 +408,16 @@ extension YPPickerVC: YPLibraryViewDelegate {
 
     public func didStartProcessing() {
         isProcessing = true
+        DispatchQueue.main.async {
+            self.blockingView.isHidden = false
+        }
     }
 
     public func didEndProcessing() {
         isProcessing = false
+        DispatchQueue.main.async {
+            self.blockingView.isHidden = true
+        }
     }
 
     public func libraryDidChange() {
