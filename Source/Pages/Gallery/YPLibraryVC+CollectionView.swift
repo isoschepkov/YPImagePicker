@@ -64,6 +64,17 @@ extension YPLibraryVC {
         }
     }
 
+    func refreshSelectionIndex() {
+        var selectedIndexPaths = [IndexPath]()
+        mediaManager.fetchResult.enumerateObjects { [unowned self] asset, index, _ in
+            if let matchIndex = self.selection.firstIndex(where: { $0.assetIdentifier == asset.localIdentifier }) {
+                self.selection[matchIndex].index = index
+                selectedIndexPaths.append(IndexPath(row: index, section: 0))
+            }
+        }
+        v.collectionView.reloadItems(at: selectedIndexPaths)
+    }
+
     func refreshSelection(indexPath: IndexPath? = nil) {
         // Refresh the numbers
         var selectedIndexPaths = [IndexPath]()

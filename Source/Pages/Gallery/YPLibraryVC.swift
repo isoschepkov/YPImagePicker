@@ -44,6 +44,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         mediaManager.collection = album.collection
         currentlySelectedIndex = 0
         refreshMediaRequest()
+        refreshSelectionIndex()
     }
 
     func initialize() {
