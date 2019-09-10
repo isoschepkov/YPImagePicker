@@ -437,6 +437,12 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
     }
 
+    private func cancelExport() {
+        mediaManager.clearExport()
+        delegate?.libraryViewFinishedLoading()
+        delegate?.didEndProcessing()
+    }
+
     public func selectedMedia(photoCallback: @escaping (_ photo: YPMediaPhoto) -> Void,
                               videoCallback: @escaping (_ videoURL: YPMediaVideo) -> Void,
                               multipleItemsCallback: @escaping (_ items: [YPMediaItem]) -> Void) {
@@ -451,9 +457,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
 
             self.resumableQueue.stop()
             self.resumableQueue.onFailure = { [weak self] in
-                self?.mediaManager.clearExport()
-                self?.delegate?.libraryViewFinishedLoading()
-                self?.delegate?.didEndProcessing()
+                self?.cancelExport()
             }
 
             self.delegate?.didStartProcessing()
@@ -463,6 +467,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 // Check video length
                 for asset in selectedAssets {
                     if self.fitsVideoLengthLimits(asset: asset.asset) == false {
+                        self.cancelExport()
                         return
                     }
                 }
@@ -533,6 +538,12 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 }
             } else {
                 let asset = selectedAssets.first!.asset
+                // Check video length
+                if !self.fitsVideoLengthLimits(asset: asset) {
+                    self.cancelExport()
+                    return
+                }
+
                 switch asset.mediaType {
                 case .video:
                     var videoURLWrapped: URL?
