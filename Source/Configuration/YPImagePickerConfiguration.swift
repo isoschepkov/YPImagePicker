@@ -14,6 +14,10 @@ import UIKit
 /// Typealias for code prettiness
 internal var YPConfig: YPImagePickerConfiguration { return YPImagePickerConfiguration.shared }
 
+public typealias YPResumeVideoHandler = () -> Void
+public typealias YPPauseVideoHandler = () -> Void
+public typealias YPOnLibraryInit = (@escaping YPResumeVideoHandler, @escaping YPPauseVideoHandler) -> Void
+
 public struct YPImagePickerConfiguration {
     public static var shared: YPImagePickerConfiguration = YPImagePickerConfiguration()
 
@@ -215,6 +219,8 @@ public struct YPConfigLibrary {
 
     /// Default name for all photos album shown when user has not yet selected a specific album
     public var allPhotosDefaultAlbumName: String?
+
+    public var onInit: YPOnLibraryInit?
 }
 
 /// Encapsulates video specific settings.

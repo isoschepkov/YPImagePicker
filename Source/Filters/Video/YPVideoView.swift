@@ -27,6 +27,10 @@ public class YPVideoView: UIView {
         return playerLayer.player!
     }
 
+    var isPlaying: Bool {
+        return player.rate != 0 && player.error == nil
+    }
+
     public override init(frame: CGRect) {
         super.init(frame: frame)
         setup()

@@ -27,12 +27,33 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     internal var emptyView: UIView?
     internal var resumableQueue = YPResumableQueue()
     internal var didSetInitialAlbumTitle = false
+    internal var playerWasPlayingBeforeLock = false
 
     // MARK: - Init
 
     public required init() {
         super.init(nibName: nil, bundle: nil)
         title = YPConfig.wordings.libraryTitle
+
+        YPConfig.library.onInit?(
+            { [weak self] in
+                self?.resumeVideoIfNeeded()
+            },
+            { [weak self] in
+                self?.pauseVideoIfNeeded()
+            }
+        )
+    }
+
+    private func resumeVideoIfNeeded() {
+        if playerWasPlayingBeforeLock {
+            v.assetZoomableView.videoView.player.play()
+        }
+    }
+
+    private func pauseVideoIfNeeded() {
+        playerWasPlayingBeforeLock = v.assetZoomableView.videoView.isPlaying
+        v.assetZoomableView.videoView.player.pause()
     }
 
     public required init?(coder _: NSCoder) {
