@@ -76,7 +76,7 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
                 |progressBar|,
                 0,
                 |buttonsContainer|,
-                0
+                safeAreaInsets.bottom
             )
 
             previewViewContainer.layer.masksToBounds = true
