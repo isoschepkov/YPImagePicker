@@ -22,6 +22,7 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
         v = YPCameraView(overlayView: YPConfig.overlayView)
         super.init(nibName: nil, bundle: nil)
         title = YPConfig.wordings.cameraTitle
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
 
     public required init?(coder _: NSCoder) {
