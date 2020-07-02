@@ -5,7 +5,7 @@
 
 import Foundation
 
-enum YPCameraViewStyle {
+public enum YPCameraViewStyle {
     case square
     case fullScreen
 }

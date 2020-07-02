@@ -49,6 +49,10 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
             )
         }
 
+        // Layout
+        let isIphone4 = UIScreen.main.bounds.height == 480
+        let sideMargin: CGFloat = isIphone4 ? 20 : 0
+
         switch YPImagePickerConfiguration.shared.photoViewStyle {
         case .square:
             layout(
@@ -77,12 +81,8 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
 
             previewViewContainer.layer.masksToBounds = true
             previewViewContainer.layer.cornerRadius = 24
-            previewViewContainer.layer.maskedCorners = CACornerMask.layerMinXMinYCorner | CACornerMask.layerMaxXMinYCorner
+            previewViewContainer.layer.maskedCorners = [CACornerMask.layerMinXMinYCorner, CACornerMask.layerMaxXMinYCorner]
         }
-
-        // Layout
-        let isIphone4 = UIScreen.main.bounds.height == 480
-        let sideMargin: CGFloat = isIphone4 ? 20 : 0
 
         overlayView?.followEdges(previewViewContainer)
 
