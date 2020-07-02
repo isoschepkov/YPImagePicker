@@ -69,6 +69,11 @@ public struct YPImagePickerConfiguration {
     /// Default value is `[.library, .photo]`
     public var screens: [YPPickerScreen] = [.library, .photo]
 
+    /// Defines photo view style
+    /// Default value is `.square`
+
+    public var photoViewStyle: YPCameraViewStyle = .square
+
     /// Adds a Crop step in the photo taking process, after filters.  Defaults to .none
     public var showsCrop: YPCropType = .none
 

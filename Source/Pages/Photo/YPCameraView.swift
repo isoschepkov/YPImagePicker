@@ -49,19 +49,40 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
             )
         }
 
+        switch YPImagePickerConfiguration.shared.photoViewStyle {
+        case .square:
+            layout(
+                0,
+                |-sideMargin - previewViewContainer - sideMargin-|,
+                -2,
+                |progressBar|,
+                0,
+                |buttonsContainer|,
+                0
+            )
+            previewViewContainer.heightEqualsWidth()
+        case .fullScreen:
+            layout(
+                0,
+                |-sideMargin - previewViewContainer - sideMargin-|,
+                0
+            )
+
+            layout(
+                |progressBar|,
+                0,
+                |buttonsContainer|,
+                0
+            )
+
+            previewViewContainer.layer.masksToBounds = true
+            previewViewContainer.layer.cornerRadius = 24
+            previewViewContainer.layer.maskedCorners = CACornerMask.layerMinXMinYCorner | CACornerMask.layerMaxXMinYCorner
+        }
+
         // Layout
         let isIphone4 = UIScreen.main.bounds.height == 480
         let sideMargin: CGFloat = isIphone4 ? 20 : 0
-        layout(
-            0,
-            |-sideMargin - previewViewContainer - sideMargin-|,
-            -2,
-            |progressBar|,
-            0,
-            |buttonsContainer|,
-            0
-        )
-        previewViewContainer.heightEqualsWidth()
 
         overlayView?.followEdges(previewViewContainer)
 

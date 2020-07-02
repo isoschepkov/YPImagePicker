@@ -65,6 +65,7 @@
 		99CF6D29201B900400487F77 /* LibraryMediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CF6D28201B900400487F77 /* LibraryMediaManager.swift */; };
 		99CF6D2B201CB96700487F77 /* YPVideoCaptureHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CF6D2A201CB96700487F77 /* YPVideoCaptureHelper.swift */; };
 		99D1DC2B1F9788930047F0E0 /* YPImagePickerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D1DC2A1F9788930047F0E0 /* YPImagePickerConfiguration.swift */; };
+		BAD0F314474470AE73DB460A /* YPCameraViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD0F92815C2A99C04CCD673 /* YPCameraViewStyle.swift */; };
 		D152543522FC313400E758F2 /* YPAlbumsNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152543422FC313400E758F2 /* YPAlbumsNavigationController.swift */; };
 		D161BD7B22A15EF900956DF7 /* YPMultipleSelectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D161BD7A22A15EF900956DF7 /* YPMultipleSelectionButton.swift */; };
 		D161BD7D22A15F3C00956DF7 /* YPLineContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D161BD7C22A15F3B00956DF7 /* YPLineContainerView.swift */; };
@@ -171,6 +172,7 @@
 		99CF6D2A201CB96700487F77 /* YPVideoCaptureHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPVideoCaptureHelper.swift; sourceTree = "<group>"; };
 		99D1DC2A1F9788930047F0E0 /* YPImagePickerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPImagePickerConfiguration.swift; sourceTree = "<group>"; };
 		A7FD716620755C2D0044A8E8 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
+		BAD0F92815C2A99C04CCD673 /* YPCameraViewStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPCameraViewStyle.swift; sourceTree = "<group>"; };
 		D152543422FC313400E758F2 /* YPAlbumsNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPAlbumsNavigationController.swift; sourceTree = "<group>"; };
 		D161BD7A22A15EF900956DF7 /* YPMultipleSelectionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPMultipleSelectionButton.swift; sourceTree = "<group>"; };
 		D161BD7C22A15F3B00956DF7 /* YPLineContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPLineContainerView.swift; sourceTree = "<group>"; };
@@ -259,6 +261,7 @@
 				EBD66106208104F400EA276E /* YPColors.swift */,
 				99019E502018CDED007325C2 /* YPImageSize.swift */,
 				99019E522018CE19007325C2 /* YPPickerScreen.swift */,
+				BAD0F92815C2A99C04CCD673 /* YPCameraViewStyle.swift */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -521,8 +524,9 @@
 				TargetAttributes = {
 					52412A921CA6114A0073C4BE = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = C885RTZ4EC;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -679,6 +683,7 @@
 				EBD66107208104F400EA276E /* YPColors.swift in Sources */,
 				99A052A11F20B49B005600B3 /* YPAlbum.swift in Sources */,
 				EBE6CA48210389ED005B0A6A /* CIImage+Extensions.swift in Sources */,
+				BAD0F314474470AE73DB460A /* YPCameraViewStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -834,11 +839,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = C885RTZ4EC;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -855,6 +861,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.yummypets.YPImagePicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -865,11 +872,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = C885RTZ4EC;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -886,6 +894,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.yummypets.YPImagePicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
