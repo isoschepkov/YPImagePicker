@@ -10,6 +10,14 @@ import Stevia
 import UIKit
 
 class YPCameraView: UIView, UIGestureRecognizerDelegate {
+    var previewAspectRatio: CGFloat? {
+        if previewViewContainer.frame.height > 0 && previewViewContainer.frame.width > 0 {
+            return previewViewContainer.frame.width / previewViewContainer.frame.height
+        }
+
+        return nil
+    }
+
     let focusView = UIView(frame: CGRect(x: 0, y: 0, width: 90, height: 90))
     let previewViewContainer = UIView()
     let buttonsContainer = UIView()
@@ -19,7 +27,7 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
     let timeElapsedLabel = UILabel()
     let progressBar = UIProgressView()
 
-    convenience init(overlayView: UIView? = nil) {
+    convenience init(overlayView: UIView? = nil, style: YPCameraViewStyle = .square) {
         self.init(frame: .zero)
 
         if let overlayView = overlayView {
@@ -53,7 +61,7 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
         let isIphone4 = UIScreen.main.bounds.height == 480
         let sideMargin: CGFloat = isIphone4 ? 20 : 0
 
-        switch YPImagePickerConfiguration.shared.photoViewStyle {
+        switch style {
         case .square:
             layout(
                 0,
@@ -68,15 +76,23 @@ class YPCameraView: UIView, UIGestureRecognizerDelegate {
         case .fullScreen:
             layout(
                 0,
-                |-sideMargin - previewViewContainer - sideMargin-|,
-                0
+                |-sideMargin - previewViewContainer - sideMargin-|
             )
+
+            previewViewContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
 
             layout(
                 |progressBar|,
                 0,
-                |buttonsContainer|,
-                safeAreaInsets.bottom
+                |buttonsContainer|
+            )
+
+            buttonsContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -32).isActive = true
+
+            buttonsContainer.layout(
+                0,
+                shotButton,
+                0
             )
 
             previewViewContainer.layer.masksToBounds = true

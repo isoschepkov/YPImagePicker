@@ -19,10 +19,9 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
     public override func loadView() { view = v }
 
     public required init() {
-        v = YPCameraView(overlayView: YPConfig.overlayView)
+        v = YPCameraView(overlayView: YPConfig.overlayView, style: YPImagePickerConfiguration.shared.photoViewStyle)
         super.init(nibName: nil, bundle: nil)
         title = YPConfig.wordings.cameraTitle
-        navigationController?.navigationBar.shadowImage = UIImage()
     }
 
     public required init?(coder _: NSCoder) {
@@ -40,6 +39,9 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(focusTapped(_:)))
         tapRecognizer.delegate = self
         v.previewViewContainer.addGestureRecognizer(tapRecognizer)
+
+        // Remove navigation bar shadow
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
 
     func start() {
@@ -124,10 +126,13 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
 
             self.photoCapture.stopCamera()
 
-            var image = shotImage
+            var image = shotImage.resetOrientation()
             // Crop the image if the output needs to be square.
             if YPConfig.onlySquareImagesFromCamera {
-                image = self.cropImageToSquare(image)
+                image = self.crop(image, to: 1)
+            } else if YPImagePickerConfiguration.shared.photoViewStyle == .fullScreen,
+                      let previewAspectRation = (self.view as? YPCameraView)?.previewAspectRatio {
+                image = self.crop(image, to: previewAspectRation)
             }
 
             // Flip image if taken form the front camera.
@@ -135,29 +140,49 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
                 image = self.flipImage(image: image)
             }
 
+            image = image.resizedImageIfNeeded()
+
             DispatchQueue.main.async {
-                let noOrietationImage = image.resetOrientation()
-                self.didCapturePhoto?(noOrietationImage.resizedImageIfNeeded())
+                self.didCapturePhoto?(image)
             }
         }
     }
 
-    func cropImageToSquare(_ image: UIImage) -> UIImage {
+    func crop(_ image: UIImage, to aspectRatio: CGFloat) -> UIImage {
         let orientation: UIDeviceOrientation = UIDevice.current.orientation
-        var imageWidth = image.size.width
-        var imageHeight = image.size.height
+        var aspectRatio = aspectRatio
+        var imageWidth: CGFloat = image.size.width
+        var imageHeight: CGFloat = image.size.height
+
         switch orientation {
         case .landscapeLeft, .landscapeRight:
             // Swap width and height if orientation is landscape
-            imageWidth = image.size.height
-            imageHeight = image.size.width
+            aspectRatio = 1 / aspectRatio
         default:
             break
         }
 
-        // The center coordinate along Y axis
-        let rcy = imageHeight * 0.5
-        let rect = CGRect(x: rcy - imageWidth * 0.5, y: 0, width: imageWidth, height: imageWidth)
+        let currentAspectRatio = imageWidth / imageHeight
+
+        let width: CGFloat
+        let height: CGFloat
+
+        if currentAspectRatio == aspectRatio {
+            return image
+        } else if currentAspectRatio < aspectRatio {
+            width = imageWidth
+            height = width / aspectRatio
+        } else {
+            height = imageHeight
+            width = height * aspectRatio
+        }
+
+        let x = (imageWidth - width) / 2
+        let y = (imageHeight - height) / 2
+
+        let newSize = CGSize(width: width, height: height)
+
+        let rect = CGRect(x: x, y: y, width: width, height: height)
         let imageRef = image.cgImage?.cropping(to: rect)
         return UIImage(cgImage: imageRef!, scale: 1.0, orientation: image.imageOrientation)
     }
