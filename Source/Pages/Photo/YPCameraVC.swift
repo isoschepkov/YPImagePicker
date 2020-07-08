@@ -50,13 +50,17 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
                 guard let strongSelf = self else {
                     return
                 }
-                self?.photoCapture.start(with: strongSelf.v.previewViewContainer, completion: {
-                    DispatchQueue.main.async {
-                        self?.refreshFlashButton()
-                    }
-                })
+                self?.startCamera()
             })
         }
+    }
+
+    func startCamera() {
+        photoCapture.start(with: v.previewViewContainer, completion: {
+            DispatchQueue.main.async {
+                self.refreshFlashButton()
+            }
+        })
     }
 
     @objc
@@ -144,6 +148,11 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
 
             DispatchQueue.main.async {
                 self.didCapturePhoto?(image)
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.v.shotButton.isEnabled = true
+                    self.startCamera()
+                }
             }
         }
     }
