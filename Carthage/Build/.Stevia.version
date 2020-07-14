@@ -3,7 +3,7 @@
   "iOS" : [
     {
       "name" : "Stevia",
-      "hash" : "1c732a261d11b5d8a698eade3fb167be932948e671ab4a793298672340ffd82d",
+      "hash" : "25fac30de9d1d9b29aad214a42a3e573f6a58e8c6ffee5de83ce014805dde896",
       "swiftToolchainVersion" : "5.2.4 (swiftlang-1103.0.32.9 clang-1103.0.32.53)"
     }
   ]
