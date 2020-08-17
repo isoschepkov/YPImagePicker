@@ -139,11 +139,6 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
                 image = self.crop(image, to: previewAspectRation)
             }
 
-            // Flip image if taken form the front camera.
-            if let device = self.photoCapture.device, device.position == .front {
-                image = self.flipImage(image: image)
-            }
-
             image = image.resizedImageIfNeeded()
 
             DispatchQueue.main.async {
@@ -194,23 +189,6 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
         let rect = CGRect(x: x, y: y, width: width, height: height)
         let imageRef = image.cgImage?.cropping(to: rect)
         return UIImage(cgImage: imageRef!, scale: 1.0, orientation: image.imageOrientation)
-    }
-
-    // Used when image is taken from the front camera.
-    func flipImage(image: UIImage!) -> UIImage! {
-        let imageSize: CGSize = image.size
-        UIGraphicsBeginImageContextWithOptions(imageSize, true, 1.0)
-        let ctx = UIGraphicsGetCurrentContext()!
-        ctx.rotate(by: CGFloat(Double.pi / 2.0))
-        ctx.translateBy(x: 0, y: -imageSize.width)
-        ctx.scaleBy(x: imageSize.height / imageSize.width, y: imageSize.width / imageSize.height)
-        ctx.draw(image.cgImage!, in: CGRect(x: 0.0,
-                                            y: 0.0,
-                                            width: imageSize.width,
-                                            height: imageSize.height))
-        let newImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return newImage
     }
 
     @objc
