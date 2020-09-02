@@ -266,6 +266,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     block(s == .authorized)
                 }
             }
+        case .limited:
+            block(true)
         }
     }
 
